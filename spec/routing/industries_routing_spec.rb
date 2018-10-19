@@ -10,10 +10,6 @@ RSpec.describe IndustriesController, type: :routing do
       expect(:get => "/industries/new").to route_to("industries#new")
     end
 
-    it "routes to #show" do
-      expect(:get => "/industries/1").to route_to("industries#show", :id => "1")
-    end
-
     it "routes to #edit" do
       expect(:get => "/industries/1/edit").to route_to("industries#edit", :id => "1")
     end

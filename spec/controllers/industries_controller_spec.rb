@@ -28,13 +28,13 @@ RSpec.describe IndustriesController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # Industry. As you add validations to Industry, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
-  }
+  let(:valid_attributes) { attributes_for(:industry) }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    {name: industry.name }
   }
+  
+  let(:industry) { create :industry }
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
@@ -45,14 +45,6 @@ RSpec.describe IndustriesController, type: :controller do
     it "returns a success response" do
       Industry.create! valid_attributes
       get :index, params: {}, session: valid_session
-      expect(response).to be_successful
-    end
-  end
-
-  describe "GET #show" do
-    it "returns a success response" do
-      industry = Industry.create! valid_attributes
-      get :show, params: {id: industry.to_param}, session: valid_session
       expect(response).to be_successful
     end
   end
@@ -80,9 +72,9 @@ RSpec.describe IndustriesController, type: :controller do
         }.to change(Industry, :count).by(1)
       end
 
-      it "redirects to the created industry" do
+      it "redirects to the industry list" do
         post :create, params: {industry: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(Industry.last)
+        expect(response).to redirect_to(industries_path)
       end
     end
 
@@ -97,20 +89,21 @@ RSpec.describe IndustriesController, type: :controller do
   describe "PUT #update" do
     context "with valid params" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        { name: 'turtles' }
       }
 
       it "updates the requested industry" do
         industry = Industry.create! valid_attributes
         put :update, params: {id: industry.to_param, industry: new_attributes}, session: valid_session
         industry.reload
-        skip("Add assertions for updated state")
+        
+        expect(industry.name).to eq('turtles')
       end
 
       it "redirects to the industry" do
         industry = Industry.create! valid_attributes
         put :update, params: {id: industry.to_param, industry: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(industry)
+        expect(response).to redirect_to(industries_path)
       end
     end
 
