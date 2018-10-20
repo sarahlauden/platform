@@ -1,9 +1,9 @@
 <% content_for(:headline) do %>
-  Industries
+  Interests
 <% end %>
 
 <% content_for(:headline_buttons) do %>
-  <%= link_to 'New', new_industry_path, class: 'btn btn-sm btn-outline-secondary' %>
+  <%= link_to 'New', new_interest_path, class: 'btn btn-sm btn-outline-secondary' %>
 <% end %>
 
 <p id="notice"><%= notice %></p>
@@ -19,13 +19,13 @@
       </thead>
 
       <tbody>
-        <% @industries.each do |industry| %>
+        <% @interests.each do |interest| %>
           <tr>
-            <td><%= industry.name %></td>
+            <td><%= interest.name %></td>
             <td class="text-right">
-              <%= link_to 'Show', industry %> |
-              <%= link_to 'Edit', edit_industry_path(industry) %> |
-              <%= link_to 'Delete', industry, method: :delete, data: { confirm: 'Are you sure?' } %>
+              <%= link_to 'Show', interest %> |
+              <%= link_to 'Edit', edit_interest_path(interest) %> |
+              <%= link_to 'Delete', interest, method: :delete, data: { confirm: 'Are you sure?' } %>
             </td>
           </tr>
         <% end %>
@@ -33,3 +33,4 @@
     </table>
   </div>
 </div>
+
