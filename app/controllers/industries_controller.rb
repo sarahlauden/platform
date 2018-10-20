@@ -56,7 +56,7 @@ class IndustriesController < ApplicationController
   def destroy
     @industry.destroy
     respond_to do |format|
-      format.html { redirect_to industries_url, notice: 'Industry was successfully destroyed.' }
+      format.html { redirect_to industries_url, notice: 'Industry was successfully deleted.' }
       format.json { head :no_content }
     end
   end

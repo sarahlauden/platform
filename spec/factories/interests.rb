@@ -1,5 +1,5 @@
 FactoryBot.define do
   factory :interest do
-    sequence(:name) {|i| "Industry #{i}"}
+    sequence(:name) {|i| "Interest #{i}"}
   end
 end

@@ -1,1 +1,1 @@
-json.array! @interests.map(&:name)
+json.interests @interests.map(&:name)

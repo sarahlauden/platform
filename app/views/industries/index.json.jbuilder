@@ -1,1 +1,1 @@
-json.array! @industries.map(&:name)
+json.industries @industries.map(&:name)
