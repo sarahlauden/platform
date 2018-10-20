@@ -1,24 +1,13 @@
-# README
+# Braven Data Warehouse
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Dev Setup
 
-Things you may want to cover:
+### Data
 
-* Ruby version
+Load starter industry/interest and other info with `rake db:seed`.
 
-* System dependencies
+### Environment Variables
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+    DATABASE_HOST
+    DATABASE_USERNAME
+    DATABASE_PASSWORD
