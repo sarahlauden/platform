@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_20_184616) do
+ActiveRecord::Schema.define(version: 2018_10_23_124254) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,6 +27,23 @@ ActiveRecord::Schema.define(version: 2018_10_20_184616) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_interests_on_name"
+  end
+
+  create_table "location_relationships", id: false, force: :cascade do |t|
+    t.integer "parent_id"
+    t.integer "child_id"
+    t.index ["child_id"], name: "index_location_relationships_on_child_id"
+    t.index ["parent_id", "child_id"], name: "index_location_relationships_on_parent_id_and_child_id"
+    t.index ["parent_id"], name: "index_location_relationships_on_parent_id"
+  end
+
+  create_table "locations", force: :cascade do |t|
+    t.string "code"
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_locations_on_code", unique: true
+    t.index ["name"], name: "index_locations_on_name", unique: true
   end
 
   create_table "majors", force: :cascade do |t|
