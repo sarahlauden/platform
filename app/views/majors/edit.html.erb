@@ -1,0 +1,5 @@
+<% content_for :headline do %>
+  Editing Major: <%= @major.name %>
+<% end %>
+
+<%= render 'form', major: @major %>
