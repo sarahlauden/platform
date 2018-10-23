@@ -14,4 +14,12 @@ module ApplicationHelper
     
     link_to(text, url, class: html_class)
   end
+  
+  def previous_page collection
+    "#{request.base_url}#{request.path}?page=#{collection.previous_page}"
+  end
+  
+  def next_page collection
+    "#{request.base_url}#{request.path}?page=#{collection.next_page}"
+  end
 end
