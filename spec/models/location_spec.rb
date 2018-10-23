@@ -27,15 +27,18 @@ RSpec.describe Location, type: :model do
   ##################
 
   describe 'ancestry' do
-    let(:unrelated) { create :location }
-    let(:grandparent) { create :location }
-    let(:parent) { create :location }
-    let(:child) { create :location }
-    let(:sibling) { create :location }
-    let(:uncle) { create :location }
-    let(:cousin) { create :location }
+    let(:unrelated) { create :location, name: 'Unrelated' }
+    let(:grandparent) { create :location, name: 'Grandparent' }
+    let(:parent) { create :location, name: 'Parent' }
+    let(:other_parent) { create :location, name: 'Other Parent' }
+    let(:child) { create :location, name: 'Child' }
+    let(:sibling) { create :location, name: 'Sibling' }
+    let(:uncle) { create :location, name: 'Uncle' }
+    let(:cousin) { create :location, name: 'Cousin' }
   
     before do
+      child.parents << other_parent
+      
       grandparent.children << parent
       grandparent.children << uncle
       
@@ -69,6 +72,16 @@ RSpec.describe Location, type: :model do
       it { should include(cousin) }
       it { should_not include(grandparent) }
       it { should_not include(unrelated) }
+    end
+    
+    describe '#parent_names' do
+      subject { child.parent_names }
+
+      it { should be_an(Array) }
+      it { expect(subject.size).to eq(2) }
+      
+      it { should include('Parent') }
+      it { should include('Other Parent') }
     end
   end
 end

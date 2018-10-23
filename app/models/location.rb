@@ -4,6 +4,12 @@ class Location < ApplicationRecord
 
   validates :code, presence: true, uniqueness: {case_sensitive: false}
   validates :name, presence: true, uniqueness: true
+  
+  default_scope { order(name: :asc) }
+  
+  def parent_names
+    parents.pluck(:name)
+  end
 
   def all_parents existing_parents=[]
     return [] if parents.empty?
