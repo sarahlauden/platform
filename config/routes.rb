@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  devise_for :users, controllers: { confirmations: 'confirmations', sessions: 'sessions', passwords: 'passwords' }
+  
   get 'home/welcome'
 
   resources :industries, except: [:show]
