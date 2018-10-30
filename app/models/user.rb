@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   ADMIN_DOMAIN_WHITELIST = ['bebraven.org']
 
-  devise :database_authenticatable, :cas_authenticatable, :rememberable
+  devise :cas_authenticatable, :rememberable
   
   before_create :attempt_admin_set, unless: :admin?
   
