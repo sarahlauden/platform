@@ -13,6 +13,19 @@
   You can generate tokens here for use in external applications.
 </p>
 
+<p><strong>Access tokens can be used to access the API on one of two ways:</strong></p>
+
+<ol>
+  <li>
+    <strong>Parameter:</strong> You can pass the <em>access_key</em> parameter along with your GET request. 
+    This is not recommended, because the access key is more exposed in web traffic and log files.
+  </li>
+  <li>
+    <strong>Header:</strong> You can set the <em>Access-Key</em> header in the request,
+    which is the preferred method.
+  </li>
+</ol>
+
 <div class="row">
   <div class="col-sm-6">
     <table class="table table-sm table-striped">
