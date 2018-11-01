@@ -44,98 +44,115 @@ RSpec.describe IndustriesController, type: :controller do
   # IndustriesController. Be sure to keep this updated too.
   let(:valid_session) { {} }
   
-  before do
-    sign_in user
-  end
-
-  describe "GET #index" do
-    it "returns a success response" do
-      Industry.create! valid_attributes
-      get :index, params: {}, session: valid_session
-      expect(response).to be_successful
+  describe 'when logged in' do
+    before do
+      sign_in user
     end
-  end
 
-  describe "GET #new" do
-    it "returns a success response" do
-      get :new, params: {}, session: valid_session
-      expect(response).to be_successful
+    describe "GET #index" do
+      it "returns a success response" do
+        get :index, params: {}, session: valid_session
+        expect(response).to be_successful
+      end
     end
-  end
 
-  describe "GET #edit" do
-    it "returns a success response" do
-      industry = Industry.create! valid_attributes
-      get :edit, params: {id: industry.to_param}, session: valid_session
-      expect(response).to be_successful
+    describe "GET #new" do
+      it "returns a success response" do
+        get :new, params: {}, session: valid_session
+        expect(response).to be_successful
+      end
     end
-  end
 
-  describe "POST #create" do
-    context "with valid params" do
-      it "creates a new Industry" do
-        expect {
+    describe "GET #edit" do
+      it "returns a success response" do
+        get :edit, params: {id: industry.to_param}, session: valid_session
+        expect(response).to be_successful
+      end
+    end
+
+    describe "POST #create" do
+      context "with valid params" do
+        it "creates a new Industry" do
+          expect {
+            post :create, params: {industry: valid_attributes}, session: valid_session
+          }.to change(Industry, :count).by(1)
+        end
+
+        it "redirects to the industry list" do
           post :create, params: {industry: valid_attributes}, session: valid_session
-        }.to change(Industry, :count).by(1)
+          expect(response).to redirect_to(industries_path)
+        end
       end
 
-      it "redirects to the industry list" do
-        post :create, params: {industry: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(industries_path)
-      end
-    end
-
-    context "with invalid params" do
-      it "returns a success response (i.e. to display the 'new' template)" do
-        post :create, params: {industry: invalid_attributes}, session: valid_session
-        expect(response).to be_successful
+      context "with invalid params" do
+        it "returns a success response (i.e. to display the 'new' template)" do
+          post :create, params: {industry: invalid_attributes}, session: valid_session
+          expect(response).to be_successful
+        end
       end
     end
-  end
 
-  describe "PUT #update" do
-    context "with valid params" do
-      let(:new_attributes) {
-        { name: 'turtles' }
-      }
+    describe "PUT #update" do
+      context "with valid params" do
+        let(:new_attributes) {
+          { name: 'turtles' }
+        }
 
-      it "updates the requested industry" do
-        industry = Industry.create! valid_attributes
-        put :update, params: {id: industry.to_param, industry: new_attributes}, session: valid_session
-        industry.reload
+        it "updates the requested industry" do
+          industry = Industry.create! valid_attributes
+          put :update, params: {id: industry.to_param, industry: new_attributes}, session: valid_session
+          industry.reload
         
-        expect(industry.name).to eq('turtles')
+          expect(industry.name).to eq('turtles')
+        end
+
+        it "redirects to the industry" do
+          industry = Industry.create! valid_attributes
+          put :update, params: {id: industry.to_param, industry: valid_attributes}, session: valid_session
+          expect(response).to redirect_to(industries_path)
+        end
       end
 
-      it "redirects to the industry" do
-        industry = Industry.create! valid_attributes
-        put :update, params: {id: industry.to_param, industry: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(industries_path)
+      context "with invalid params" do
+        it "returns a success response (i.e. to display the 'edit' template)" do
+          industry = Industry.create! valid_attributes
+          put :update, params: {id: industry.to_param, industry: invalid_attributes}, session: valid_session
+          expect(response).to be_successful
+        end
       end
     end
 
-    context "with invalid params" do
-      it "returns a success response (i.e. to display the 'edit' template)" do
+    describe "DELETE #destroy" do
+      it "destroys the requested industry" do
         industry = Industry.create! valid_attributes
-        put :update, params: {id: industry.to_param, industry: invalid_attributes}, session: valid_session
+        expect {
+          delete :destroy, params: {id: industry.to_param}, session: valid_session
+        }.to change(Industry, :count).by(-1)
+      end
+
+      it "redirects to the industries list" do
+        industry = Industry.create! valid_attributes
+        delete :destroy, params: {id: industry.to_param}, session: valid_session
+        expect(response).to redirect_to(industries_url)
+      end
+    end
+  end
+  
+  describe 'JSON requests' do
+    let(:access_token) { create :access_token }
+    
+    describe "GET #index" do
+      it "allows access token via params" do
+        get :index, params: {access_key: access_token.key}, session: valid_session, format: :json
+        expect(response).to be_successful
+      end
+
+      it "allows access token via headers" do
+        request.headers.merge!('Access-Key' => access_token.key)
+        
+        get :index, params: {}, session: valid_session, format: :json
         expect(response).to be_successful
       end
     end
   end
-
-  describe "DELETE #destroy" do
-    it "destroys the requested industry" do
-      industry = Industry.create! valid_attributes
-      expect {
-        delete :destroy, params: {id: industry.to_param}, session: valid_session
-      }.to change(Industry, :count).by(-1)
-    end
-
-    it "redirects to the industries list" do
-      industry = Industry.create! valid_attributes
-      delete :destroy, params: {id: industry.to_param}, session: valid_session
-      expect(response).to redirect_to(industries_url)
-    end
-  end
-
 end
