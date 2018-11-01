@@ -1,0 +1,36 @@
+<% content_for(:headline) do %>
+  Access Tokens
+<% end %>
+
+<% content_for(:headline_buttons) do %>
+  <%= link_to 'New', new_access_token_path, class: 'btn btn-sm btn-outline-secondary' %>
+<% end %>
+
+<%= success(notice) %>
+
+<div class="row">
+  <div class="col-sm-6">
+    <table class="table table-sm table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Key</th>
+          <th></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @access_tokens.each do |access_token| %>
+          <tr>
+            <td><%= access_token.name %></td>
+            <td><%= access_token.key %></td>
+            <td class="text-right smaller">
+              <%= link_to 'Edit', edit_access_token_path(access_token) %> |
+              <%= link_to 'Delete', access_token, method: :delete, data: { confirm: 'Are you sure?' } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

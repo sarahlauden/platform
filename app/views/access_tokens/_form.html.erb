@@ -1,0 +1,27 @@
+<%= form_with(model: access_token, local: true) do |form| %>
+  <% if access_token.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(access_token.errors.count, "error") %> prohibited this access_token from being saved:</h2>
+
+      <ul>
+      <% access_token.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="form-group">
+        <%= form.label :name %>
+        <%= form.text_field :name, class: 'form-control' %>
+      </div>
+
+      <div class="actions">
+        <%= form.submit class: 'btn btn-primary' %>
+        <%= link_to 'Cancel', access_tokens_path, class: 'btn btn-secondary'%>
+      </div>
+    </div>
+  </div>
+<% end %>

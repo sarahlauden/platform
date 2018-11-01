@@ -8,5 +8,7 @@ Rails.application.routes.draw do
   resources :locations, only: [:index, :show]
   resources :majors, except: [:show]
 
+  resources :access_tokens, except: [:show]
+
   root to: "home#welcome"
 end
