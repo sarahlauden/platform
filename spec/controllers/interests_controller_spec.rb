@@ -25,6 +25,8 @@ require 'rails_helper'
 
 RSpec.describe InterestsController, type: :controller do
   render_views
+  
+  let(:user) { create :user, admin: true }
 
   # This should return the minimal set of attributes required to create a valid
   # Interest. As you add validations to Interest, be sure to
@@ -41,6 +43,10 @@ RSpec.describe InterestsController, type: :controller do
   # in order to pass any filters (e.g. authentication) defined in
   # IndustriesController. Be sure to keep this updated too.
   let(:valid_session) { {} }
+  
+  before do
+    sign_in user
+  end
 
   describe "GET #index" do
     it "returns a success response" do

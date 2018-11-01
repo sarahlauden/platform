@@ -5,6 +5,8 @@ class User < ApplicationRecord
   
   before_create :attempt_admin_set, unless: :admin?
   
+  validates :email, presence: true, uniqueness: true
+  
   private
   
   def attempt_admin_set

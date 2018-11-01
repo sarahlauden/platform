@@ -24,7 +24,9 @@ require 'rails_helper'
 # `rails-controller-testing` gem.
 
 RSpec.describe LocationsController, type: :controller do
-  # render_views
+  render_views
+  
+  let(:user) { create :user, admin: true }
 
   # This should return the minimal set of attributes required to create a valid
   # Industry. As you add validations to Industry, be sure to
@@ -41,6 +43,10 @@ RSpec.describe LocationsController, type: :controller do
   # in order to pass any filters (e.g. authentication) defined in
   # IndustriesController. Be sure to keep this updated too.
   let(:valid_session) { {} }
+  
+  before do
+    sign_in user
+  end
 
   describe "GET #index" do
     it "returns a success response" do
