@@ -6,18 +6,48 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
+def yaml label
+  YAML.load(File.read("#{Rails.root}/db/seeds/#{label}.yml"))
+end
+
 if Industry.count == 0
-  Industry.create YAML.load(File.read("#{Rails.root}/db/seeds/industries.yml")).map{|name| {name: name}}
+  Industry.create yaml(:industries).map{|name| {name: name}}
 end
 
 if Interest.count == 0
-  Interest.create YAML.load(File.read("#{Rails.root}/db/seeds/interests.yml")).map{|name| {name: name}}
+  Interest.create yaml(:interests).map{|name| {name: name}}
+end
+
+if Location.count == 0
+  Location.create yaml(:locations).map{|attributes| {code: attributes['code'], name: attributes['name']}}
+  
+  # now add the relationships
+  top_codes = yaml(:locations).select{|d| d['source'] == 'TOP'}.map{|d| d['code']}
+  tops = Location.where(code: top_codes)
+
+  yaml(:locations).each do |data|
+    location = Location.find_by code: data['code']
+    print '.'
+    
+    location.parents = case data['source']
+    when 'TOP'
+      tops - [location]
+    when 'ST'
+      tops
+    else
+      city, state_list = location.name.split(/,\s*/)
+      
+      if state_list
+        Location.where(code: state_list.split('-')).all
+      else
+        []
+      end
+    end
+  end
 end
 
 if Major.count == 0
-  data = YAML.load(File.read("#{Rails.root}/db/seeds/majors.yml"))
-  
-  data.each do |category, major_names|
+  yaml(:majors).each do |category, major_names|
     category = Major.create name: category
     next if major_names.nil?
 
@@ -26,3 +56,5 @@ if Major.count == 0
     end
   end
 end
+
+puts
