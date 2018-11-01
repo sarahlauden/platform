@@ -1,5 +1,5 @@
 <% content_for(:headline) do %>
-  Access Tokens
+  Access Tokens for API Access
 <% end %>
 
 <% content_for(:headline_buttons) do %>
@@ -7,6 +7,11 @@
 <% end %>
 
 <%= success(notice) %>
+
+<p>
+  API access requires the use of an access token in lieu of logging in via SSO.
+  You can generate tokens here for use in external applications.
+</p>
 
 <div class="row">
   <div class="col-sm-6">
