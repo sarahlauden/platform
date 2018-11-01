@@ -44,22 +44,55 @@ RSpec.describe LocationsController, type: :controller do
   # IndustriesController. Be sure to keep this updated too.
   let(:valid_session) { {} }
   
-  before do
-    sign_in user
-  end
+  describe 'when logged in' do
+    before do
+      sign_in user
+    end
 
-  describe "GET #index" do
-    it "returns a success response" do
-      Location.create! valid_attributes
-      get :index, params: {}, session: valid_session
-      expect(response).to be_successful
+    describe "GET #index" do
+      it "returns a success response" do
+        get :index, params: {}, session: valid_session
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET #show" do
+      it "returns a success response" do
+        get :show, params: {id: location.id}, session: valid_session
+        expect(response).to be_successful
+      end
     end
   end
 
-  describe "GET #show" do
-    it "returns a success response" do
-      get :show, params: {id: location.id}, session: valid_session
-      expect(response).to be_successful
+  describe 'JSON requests' do
+    let(:access_token) { create :access_token }
+    
+    describe "GET #index" do
+      it "allows access token via params" do
+        get :index, params: {access_key: access_token.key}, session: valid_session, format: :json
+        expect(response).to be_successful
+      end
+
+      it "allows access token via headers" do
+        request.headers.merge!('Access-Key' => access_token.key)
+        
+        get :index, params: {}, session: valid_session, format: :json
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET #show" do
+      it "allows access token via params" do
+        get :show, params: {id: location.id, access_key: access_token.key}, session: valid_session, format: :json
+        expect(response).to be_successful
+      end
+
+      it "allows access token via params" do
+        request.headers.merge!('Access-Key' => access_token.key)
+        
+        get :show, params: {id: location.id}, session: valid_session, format: :json
+        expect(response).to be_successful
+      end
     end
   end
 end
