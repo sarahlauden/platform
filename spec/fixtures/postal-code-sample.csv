@@ -1,0 +1,5 @@
+ZIPCode,ZIPType,CityName,CityType,CountyName,CountyFIPS,StateName,StateAbbr,StateFIPS,MSACode,AreaCode,TimeZone,UTC,DST,Latitude,Longitude
+00501,U,Holtsville,D,Suffolk,36103,New York,NY,36,5380,631/934,Eastern,-5.0,Y,  40.813078, -73.046388
+00501,U,Internal Revenue Service,N,Suffolk,36103,New York,NY,36,5380,631/934,Eastern,-5.0,Y,  40.813078, -73.046388
+00544,U,Holtsville,D,Suffolk,36103,New York,NY,36,5380,631/934,Eastern,-5.0,Y,  40.813223, -73.049288
+00544,U,Internal Revenue Service,N,Suffolk,36103,New York,NY,36,5380,631/934,Eastern,-5.0,Y,  40.813223, -73.049288
