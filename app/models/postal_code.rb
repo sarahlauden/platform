@@ -3,7 +3,7 @@ require 'csv'
 
 class PostalCode < ApplicationRecord
   validates :code, presence: true, uniqueness: {case_sensitive: false}
-  validates :latitude, presence: true, numericality: {greater_than: 18.0, less_than: 72.0}
+  validates :latitude, presence: true, numericality: {greater_than: 17.5, less_than: 72.0}
   validates :longitude, presence: true, numericality: {greater_than: -160.0, less_than: -50.0}
 
   class << self

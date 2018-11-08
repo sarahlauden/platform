@@ -14,7 +14,7 @@ RSpec.describe PostalCode, type: :model do
     it { should validate_uniqueness_of(:code).case_insensitive }
   end
   
-  it { should validate_numericality_of(:latitude).is_greater_than(18.0).is_less_than(72.0) }
+  it { should validate_numericality_of(:latitude).is_greater_than(17.5).is_less_than(72.0) }
   it { should validate_numericality_of(:longitude).is_greater_than(-160.0).is_less_than(-50.0) }
   
   ###############
