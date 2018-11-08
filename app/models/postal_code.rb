@@ -2,9 +2,12 @@ require 'geo_distance'
 require 'csv'
 
 class PostalCode < ApplicationRecord
-  validates :code, presence: true, uniqueness: {case_sensitive: false}
-  validates :latitude, presence: true, numericality: {greater_than: 17.5, less_than: 72.0}
-  validates :longitude, presence: true, numericality: {greater_than: -160.0, less_than: -50.0}
+  # no longer validating uniqueness of code, doing this at the db level with index constraint.
+  # this is to improve the performance of validating all postal code records at once,
+  # which was causing an N+1 issue checking for uniquness one record at a time.
+  
+  validates :latitude, presence: true, numericality: {greater_than: 13.0, less_than: 72.0}
+  validates :longitude, presence: true, numericality: {greater_than: -177.0, less_than: -50.0}
 
   class << self
     def distance origin_zip, destination_zip

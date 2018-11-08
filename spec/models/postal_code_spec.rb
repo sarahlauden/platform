@@ -9,13 +9,8 @@ RSpec.describe PostalCode, type: :model do
   it { should validate_presence_of :latitude }
   it { should validate_presence_of :longitude }
   
-  describe 'validating uniqueness' do
-    before { create :postal_code }
-    it { should validate_uniqueness_of(:code).case_insensitive }
-  end
-  
-  it { should validate_numericality_of(:latitude).is_greater_than(17.5).is_less_than(72.0) }
-  it { should validate_numericality_of(:longitude).is_greater_than(-160.0).is_less_than(-50.0) }
+  it { should validate_numericality_of(:latitude).is_greater_than(13.0).is_less_than(72.0) }
+  it { should validate_numericality_of(:longitude).is_greater_than(-177.0).is_less_than(-50.0) }
   
   ###############
   # Class methods
