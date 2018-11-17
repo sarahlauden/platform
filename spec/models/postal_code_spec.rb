@@ -6,6 +6,11 @@ RSpec.describe PostalCode, type: :model do
   #############
 
   it { should validate_presence_of :code }
+  it { should validate_numericality_of :code }
+  
+  it { should validate_presence_of :city }
+  it { should validate_presence_of :state }
+  
   it { should validate_presence_of :latitude }
   it { should validate_presence_of :longitude }
   
@@ -34,14 +39,20 @@ RSpec.describe PostalCode, type: :model do
   end
   
   describe '::load_csv' do
-    it "loads the contents of the CSV file into the db, weeding out duplicates" do
-      PostalCode.load_csv("#{Rails.root}/spec/fixtures/postal-code-sample.csv")
-      expect(PostalCode.count).to eq(2)
+    let(:postal_code) { PostalCode.find_by code: '00501' }
 
-      postal_code = PostalCode.find_by code: '00501'
-      expect(postal_code.lat).to be_within(0.00001).of(40.813078)
-      expect(postal_code.lon).to be_within(0.00001).of(-73.046388)
+    before { PostalCode.load_csv("#{Rails.root}/spec/fixtures/postal-code-sample.csv") }
+    
+    subject { postal_code }
+
+    it "loads the contents of the CSV file into the db, weeding out duplicates" do
+      expect(PostalCode.count).to eq(2)
     end
+
+    it { expect(subject.lat).to be_within(0.00001).of(40.813078) }
+    it { expect(subject.lon).to be_within(0.00001).of(-73.046388) }
+    it { expect(subject.city).to eq('Holtsville') }
+    it { expect(subject.state).to eq('NY') }
     
     it "clears table first" do
       create :postal_code

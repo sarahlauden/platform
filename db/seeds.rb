@@ -50,21 +50,6 @@ postal_csv = "#{Rails.root}/tmp/postal-codes.csv"
 
 if PostalCode.count == 0 && Location.count > 0 && File.exists?(postal_csv)
   PostalCode.load_csv postal_csv
-  
-  # now add states to postal codes
-  codes = Hash.new{|h,k| h[k] = Array.new}
-  
-  puts "Loading state zip codes from file"
-  CSV.foreach('tmp/postal-codes.csv', headers: true) do |row|
-    codes[row['StateAbbr']] << row['ZIPCode']
-  end
-  
-  codes.each do |state, zips|
-    PostalCode.where(code: zips.uniq).update_all(state: state)
-    print '.'; $stdout.flush
-  end
-  
-  puts
 end
 
 if Major.count == 0

@@ -5,6 +5,8 @@ class PostalCode < ApplicationRecord
   # no longer validating uniqueness of code, doing this at the db level with index constraint.
   # this is to improve the performance of validating all postal code records at once,
   # which was causing an N+1 issue checking for uniquness one record at a time.
+  validates :code, presence: true, numericality: true
+  validates :city, :state, presence: true
   
   validates :latitude, presence: true, numericality: {greater_than: 13.0, less_than: 72.0}
   validates :longitude, presence: true, numericality: {greater_than: -177.0, less_than: -50.0}
@@ -27,13 +29,13 @@ class PostalCode < ApplicationRecord
         now = Time.now
         previous_zips = {}
 
-        bulk_insert(:code, :msa_code, :latitude, :longitude, :created_at, :updated_at, ignore: true) do |bulk|
+        bulk_insert(:code, :city, :state, :msa_code, :latitude, :longitude, :created_at, :updated_at, ignore: true) do |bulk|
           csv.each do |row|
             row['timestamp'] = now
             zip = row['ZIPCode']
             
             unless previous_zips.has_key?(zip)
-              bulk.add ['ZIPCode', 'MSACode', 'Latitude', 'Longitude', 'timestamp', 'timestamp'].map{|f| row[f]}
+              bulk.add ['ZIPCode', 'CityName', 'StateAbbr', 'MSACode', 'Latitude', 'Longitude', 'timestamp', 'timestamp'].map{|f| row[f]}
               previous_zips[zip] = 1
             end
           end
