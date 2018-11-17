@@ -9,19 +9,6 @@
 
 <div class="row">
   <div class="col-sm-4">
-    <table class="table table-sm table-striped">
-      <tbody>
-        <tr>
-          <td><b>Location</b></td>
-          <td class="text-right"><%= @postal_code.name %></td>
-        </tr>
-        <% [:longitude, :latitude].each do |attr| %>
-          <tr>
-            <td><b><%= attr.to_s.titleize %></b></td>
-            <td class="text-right"><%= @postal_code.send attr %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+    <%= render 'postal_code', postal_code: @postal_code%>
   </div>
 </div> <!-- row -->

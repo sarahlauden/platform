@@ -69,6 +69,25 @@ RSpec.describe PostalCodesController, type: :controller do
         expect(response).to redirect_to(postal_code_path(postal_code.code))
       end
     end
+
+    describe "GET #distance" do
+      describe 'when both postal codes are valid' do
+        let(:from) { create :postal_code, code: '68521' }
+        let(:to) { create :postal_code, code: '68510' }
+        
+        it "returns a success response" do
+          get :distance, params: {from: from.code, to: to.code}, session: valid_session
+          expect(response).to be_successful
+        end
+      end
+      
+      describe 'when a postal code is invalid' do
+        it "redirects to index" do
+          get :distance, params: {from: '10001', to: '10002'}, session: valid_session
+          expect(response).to redirect_to(postal_codes_path)
+        end
+      end
+    end
   end
   
   describe 'JSON requests' do

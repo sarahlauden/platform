@@ -35,4 +35,17 @@ module ApplicationHelper
       </div>
     ).html_safe
   end
+
+  def failure notice
+    return '' if notice.nil?
+    
+    %Q(
+      <div class="alert alert-danger alert-dismissable fade show" role="alert">
+        <strong>Woops!</strong> #{notice}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    ).html_safe
+  end
 end
