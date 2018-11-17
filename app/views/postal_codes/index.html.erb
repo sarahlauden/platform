@@ -1,0 +1,17 @@
+<% content_for(:headline) do %>
+  Postal Codes
+<% end %>
+
+<% content_for(:headline_buttons) do %>
+  <%= link_to 'JSON', postal_codes_path(format: 'json'), class: 'btn btn-sm btn-secondary', target: '_blank' %>
+<% end %>
+
+<div class="row">
+  <div class="col-sm-6">
+    <%= form_tag search_postal_codes_path, class: 'form-inline' do %>
+      <%= number_field_tag :code, nil, placeholder: 'postal code lookup', id: 'postal-code-search', class: 'form-control mr-2' %>
+      
+      <%= submit_tag 'find', class: 'btn btn-primary' %>
+    <% end %>
+  </div>
+</div>

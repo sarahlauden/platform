@@ -83,4 +83,8 @@ class PostalCode < ApplicationRecord
     return @location if defined?(@location)
     @location = Location.find_by(code: msa_code) || Location.find_by(code: state)
   end
+  
+  def name
+    [city, state].join(', ')
+  end
 end

@@ -164,4 +164,9 @@ RSpec.describe PostalCode, type: :model do
       end
     end
   end
+  
+  describe '#name' do
+    subject { PostalCode.new(city: 'Lincoln', state: 'NE').name }
+    it { should eq('Lincoln, NE') }
+  end
 end
