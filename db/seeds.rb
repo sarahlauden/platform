@@ -46,6 +46,12 @@ if Location.count == 0
   end
 end
 
+postal_csv = "#{Rails.root}/tmp/postal-codes.csv"
+
+if PostalCode.count == 0 && Location.count > 0 && File.exists?(postal_csv)
+  PostalCode.load_csv postal_csv
+end
+
 if Major.count == 0
   yaml(:majors).each do |category, major_names|
     category = Major.create name: category
