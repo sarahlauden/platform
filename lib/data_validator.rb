@@ -2,7 +2,7 @@ class DataValidator
   class << self
     def classes
       Rails.application.eager_load!
-      ActiveRecord::Base.descendants.select(&:table_exists?).sort_by(&:name)
+      ActiveRecord::Base.descendants.select(&:table_exists?).reject{|d| d.name =~ /migration/i}.sort_by(&:name)
     end
   end
   
