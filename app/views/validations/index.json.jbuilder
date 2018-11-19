@@ -1,0 +1,1 @@
+json.messages ["This is an empty endpoint. Use '/validations/report.json' instead."]
