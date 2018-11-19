@@ -9,13 +9,20 @@ class DataValidator
   def report
     return @report if defined?(@report)
     
-    @report = {valid: true, invalids: Hash.new(Array.new)}
+    @report = {valid: true, models: {}}
     
     self.class.classes.each do |model_class|
       class_name = model_class.name.underscore.to_sym
+      invalid_ids = invalids(model_class)
       
-      @report[:invalids][class_name] = invalids(model_class)
-      @report[:valid] = false unless @report[:invalids][class_name].empty?
+      @report[:models][class_name] = {
+        total: model_class.count,
+        valid: model_class.count - invalid_ids.size,
+        invalid: invalid_ids.size,
+        invalid_ids: invalid_ids
+      }
+
+      @report[:valid] = false unless invalid_ids.empty?
     end
     
     @report

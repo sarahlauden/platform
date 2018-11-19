@@ -19,15 +19,19 @@
       <thead>
         <tr>
           <th>Model</th>
-          <th>Invalid Records</th>
+          <th class="text-right">Valid</th>
+          <th class="text-right">Invalid</th>
+          <th class="text-right">Total</th>
         </tr>
       </thead>
 
       <tbody>
-        <% @report[:invalids].each do |class_name, invalids| %>
+        <% @report[:models].each do |class_name, results| %>
           <tr>
             <td><%= class_name %></td>
-            <td class="text-right"><%= invalids.size %></td>
+            <td class="text-right"><%= number_with_delimiter(results[:valid]) %></td>
+            <td class="text-right"><%= number_with_delimiter(results[:invalid]) %></td>
+            <td class="text-right"><%= number_with_delimiter(results[:total]) %></td>
           </tr>
         <% end %>
       </tbody>

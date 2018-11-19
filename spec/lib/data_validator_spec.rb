@@ -74,11 +74,21 @@ RSpec.describe DataValidator do
       
       it { expect(subject[:valid]).to be_truthy }
       
-      [:access_token, :industry, :interest, :location, :major, :postal_code, :user].each do |key|
-        it { expect(subject[:invalids].keys).to include(key) }
-        it { expect(subject[:invalids][key]).to be_an(Array) }
-        it { expect(subject[:invalids][key]).to be_empty }
+      [:access_token, :industry, :interest, :location, :postal_code, :user].each do |key|
+        it { expect(subject[:models].keys).to include(key) }
+        it { expect(subject[:models][key][:invalid_ids]).to be_an(Array) }
+        it { expect(subject[:models][key][:invalid_ids]).to be_empty }
+        it { expect(subject[:models][key][:total]).to eq(0) }
+        it { expect(subject[:models][key][:valid]).to eq(0) }
+        it { expect(subject[:models][key][:invalid]).to eq(0) }
       end
+      
+      it { expect(subject[:models].keys).to include(:major) }
+      it { expect(subject[:models][:major][:invalid_ids]).to be_an(Array) }
+      it { expect(subject[:models][:major][:invalid_ids]).to be_empty }
+      it { expect(subject[:models][:major][:total]).to eq(1) }
+      it { expect(subject[:models][:major][:valid]).to eq(1) }
+      it { expect(subject[:models][:major][:invalid]).to eq(0) }
     end
     
     describe 'when an invalid record exists' do
@@ -89,14 +99,20 @@ RSpec.describe DataValidator do
       it { expect(subject[:valid]).to be_falsey }
       
       [:access_token, :industry, :interest, :location, :postal_code, :user].each do |key|
-        it { expect(subject[:invalids].keys).to include(key) }
-        it { expect(subject[:invalids][key]).to be_an(Array) }
-        it { expect(subject[:invalids][key]).to be_empty }
+        it { expect(subject[:models].keys).to include(key) }
+        it { expect(subject[:models][key][:invalid_ids]).to be_an(Array) }
+        it { expect(subject[:models][key][:invalid_ids]).to be_empty }
+        it { expect(subject[:models][key][:total]).to eq(0) }
+        it { expect(subject[:models][key][:valid]).to eq(0) }
+        it { expect(subject[:models][key][:invalid]).to eq(0) }
       end
       
-      it { expect(subject[:invalids].keys).to include(:major) }
-      it { expect(subject[:invalids][:major]).to be_an(Array) }
-      it { expect(subject[:invalids][:major]).to include(model.id) }
+      it { expect(subject[:models].keys).to include(:major) }
+      it { expect(subject[:models][:major][:invalid_ids]).to be_an(Array) }
+      it { expect(subject[:models][:major][:invalid_ids]).to include(model.id) }
+      it { expect(subject[:models][:major][:total]).to eq(1) }
+      it { expect(subject[:models][:major][:valid]).to eq(0) }
+      it { expect(subject[:models][:major][:invalid]).to eq(1) }
     end
   end
 end
