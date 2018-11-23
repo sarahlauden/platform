@@ -11,7 +11,7 @@ class Phone < ApplicationRecord
     return if value.blank?
     return unless has_required_digits?
     
-    digits = value.gsub(only_digits, '')
+    digits = only_digits(value)
     self.value = [digits[0,3], digits[3,3], digits[6,4]].join('-')
   end
   
@@ -21,8 +21,11 @@ class Phone < ApplicationRecord
     end
   end
   
-  def only_digits
-    /[^0-9]/
+  def only_digits string
+    digits = string.gsub(/[^0-9]/, '').split('')
+    digits.shift if digits.first == '1'
+    
+    digits.join('')
   end
   
   def required_digits
@@ -31,6 +34,6 @@ class Phone < ApplicationRecord
   
   def has_required_digits?
     return false if value.blank?
-    value.gsub(only_digits, '').size == required_digits
+    only_digits(value).size == required_digits
   end
 end
