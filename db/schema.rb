@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_23_164828) do
+ActiveRecord::Schema.define(version: 2018_11_26_134612) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,15 @@ ActiveRecord::Schema.define(version: 2018_11_23_164828) do
     t.string "zip", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "contacts_owners", id: false, force: :cascade do |t|
+    t.integer "contact_id"
+    t.integer "contact_type"
+    t.integer "owner_id"
+    t.integer "owner_type"
+    t.index ["contact_id", "contact_type"], name: "index_contacts_owners_on_contact_id_and_contact_type"
+    t.index ["owner_id", "owner_type"], name: "index_contacts_owners_on_owner_id_and_owner_type"
   end
 
   create_table "emails", force: :cascade do |t|
