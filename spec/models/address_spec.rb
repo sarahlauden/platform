@@ -3,6 +3,8 @@ require 'rails_helper'
 RSpec.describe Address, type: :model do
   let(:postal_code) { create :postal_code, code: '68521', city: 'Lincoln', state: 'NE'}
   
+  it_behaves_like 'contact', :address
+  
   #############
   # Validations
   #############

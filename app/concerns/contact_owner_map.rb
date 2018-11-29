@@ -1,5 +1,6 @@
 require 'contact_list'
 
+# include in models that own contacts
 module ContactOwnerMap
   extend ActiveSupport::Concern
 

@@ -1,4 +1,7 @@
 class Phone < ApplicationRecord
+  # allow this model to be owned as a contact
+  include OwnerContactMap
+
   validates :value, presence: true, uniqueness: true
   
   validate :value_must_contain_ten_digits

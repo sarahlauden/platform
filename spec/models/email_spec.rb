@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Email, type: :model do
+  it_behaves_like 'contact', :email
+  
   #############
   # Validations
   #############
