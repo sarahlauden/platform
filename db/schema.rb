@@ -34,13 +34,13 @@ ActiveRecord::Schema.define(version: 2018_11_26_134612) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "contacts_owners", id: false, force: :cascade do |t|
+  create_table "contact_owners", force: :cascade do |t|
     t.integer "contact_id"
-    t.integer "contact_type"
+    t.string "contact_type"
     t.integer "owner_id"
-    t.integer "owner_type"
-    t.index ["contact_id", "contact_type"], name: "index_contacts_owners_on_contact_id_and_contact_type"
-    t.index ["owner_id", "owner_type"], name: "index_contacts_owners_on_owner_id_and_owner_type"
+    t.string "owner_type"
+    t.index ["contact_id", "contact_type"], name: "index_contact_owners_on_contact_id_and_contact_type"
+    t.index ["owner_id", "owner_type"], name: "index_contact_owners_on_owner_id_and_owner_type"
   end
 
   create_table "emails", force: :cascade do |t|
