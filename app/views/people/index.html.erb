@@ -1,0 +1,29 @@
+<% content_for(:headline) do %>
+  People
+<% end %>
+
+<% content_for(:headline_buttons) do %>
+  <%= link_to 'JSON', people_path(format: 'json'), class: 'btn btn-sm btn-secondary', target: '_blank' %>
+<% end %>
+
+<%= success(notice) %>
+
+<div class="row">
+  <div class="col-sm-6">
+    <table class="table table-sm table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @people.each do |person| %>
+          <tr>
+            <td><%= link_to person.full_name, person_path(person) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
