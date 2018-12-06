@@ -9,6 +9,13 @@ class Address < ApplicationRecord
   
   before_validation :set_city, :set_state
   
+  def as_json options={}
+    attribute_list = ['line1', 'line2', 'city', 'state', 'zip']
+    attribute_list.delete('line2') if line2.blank?
+    
+    attributes.slice(*attribute_list)
+  end
+  
   private
   
   def set_city

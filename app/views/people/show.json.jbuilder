@@ -4,5 +4,9 @@ json.person do
   json.middle_name @person.middle_name
   json.last_name @person.last_name
   
-  json.contacts ["coming soon"]
+  json.contacts do
+    json.phones @person.phones
+    json.emails @person.emails
+    json.addresses @person.addresses
+  end
 end

@@ -8,6 +8,10 @@ class Phone < ApplicationRecord
   
   before_validation :format_value
   
+  def as_json options={}
+    attributes.slice('value')
+  end
+  
   private
   
   def format_value

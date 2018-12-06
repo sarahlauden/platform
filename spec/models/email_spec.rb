@@ -26,6 +26,18 @@ RSpec.describe Email, type: :model do
     it { should_not allow_value('bob').for(:value) }
   end
   
+  ##################
+  # Instance methods
+  ##################
+
+  describe '#as_json' do
+    let(:email) { build :email, value: 'bob@example.com' }
+    
+    subject { email.as_json }
+    
+    it { expect(subject['value']).to eq(email.value) }
+  end
+  
   ###########
   # Callbacks
   ###########

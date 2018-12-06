@@ -50,6 +50,17 @@ RSpec.describe Phone, type: :model do
       expect(phone.errors[:value]).to include(error)
     end
   end
+  
+  ##################
+  # Instance methods
+  ##################
+
+  describe '#as_json' do
+    let(:phone) { build :phone, value: '111-222-3333' }
+    
+    subject { phone.as_json }
+    it { expect(subject['value']).to eq(phone.value) }
+  end
 
   ###########
   # Callbacks

@@ -6,6 +6,10 @@ class Email < ApplicationRecord
   
   before_validation :downcase
   
+  def as_json options={}
+    attributes.slice('value')
+  end
+  
   private
   
   def downcase

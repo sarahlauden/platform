@@ -121,4 +121,35 @@ RSpec.describe Address, type: :model do
       end
     end
   end
+  
+  ##################
+  # Instance methods
+  ##################
+
+  describe '#as_json' do
+    let(:address) { build :address, line1: line1, line2: line2, city: city, state: state, zip: zip }
+    let(:line1) { '123 Way Street' }
+    let(:line2) { 'Apt C' }
+    let(:city) { 'Lincoln' }
+    let(:state) { 'NE' }
+    let(:zip) { '68521' }
+    
+    subject { address.as_json }
+    
+    it { expect(subject['line1']).to eq(line1) }
+    it { expect(subject['line2']).to eq(line2) }
+    it { expect(subject['city']).to eq(city) }
+    it { expect(subject['state']).to eq(state) }
+    it { expect(subject['zip']).to eq(zip) }
+    
+    describe 'when line2 is nil' do
+      let(:line2) { nil }
+      it { expect(subject).to_not have_key('line2')}
+    end
+    
+    describe 'when line2 is blank' do
+      let(:line2) { '' }
+      it { expect(subject).to_not have_key('line2')}
+    end
+  end
 end
