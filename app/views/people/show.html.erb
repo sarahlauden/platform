@@ -9,6 +9,67 @@
 
 <div class="row">
   <div class="col-sm-4">
-    <p>Contacts will be added here.</p>
+    <div class="card">
+      <div class="card-header">
+        <span data-feather="phone"></span>
+        Phone Numbers
+      </div>
+        
+      <ul class="list-group list-group-flush">
+        <% if @person.phones.empty? %>
+          <li class="list-group-item">None at this time.</li>
+        <% else %>
+          <% @person.phones.each do |phone| %>
+            <li class="list-group-item"><%= phone.value %></li>
+          <% end %>
+        <% end %>
+      </ul>
+    </div> <!-- card -->
+  </div>
+  
+  <div class="col-sm-4">
+    <div class="card">
+      <div class="card-header">
+        <span data-feather="inbox"></span>
+        E-Mails
+      </div>
+        
+      <ul class="list-group list-group-flush">
+        <% if @person.emails.empty? %>
+          <li class="list-group-item">None at this time.</li>
+        <% else %>
+          <% @person.emails.each do |email| %>
+            <li class="list-group-item"><%= link_to email.value, "mailto:#{email.value}" %></li>
+          <% end %>
+        <% end %>
+      </ul>
+    </div> <!-- card -->
+  </div>
+  
+  <div class="col-sm-4">
+    <div class="card">
+      <div class="card-header">
+        <span data-feather="mail"></span>
+        Addresses
+      </div>
+        
+      <ul class="list-group list-group-flush">
+        <% if @person.addresses.empty? %>
+          <li class="list-group-item">None at this time.</li>
+        <% else %>
+          <% @person.addresses.each do |address| %>
+            <li class="list-group-item">
+              <%= address.line1 %><br>
+            
+              <% if address.line2 %>
+                <%= address.line2 %><br>
+              <% end %>
+            
+              <%= address.city %>, <%= address.state %> <%= address.zip %>
+            </li>
+          <% end %>
+        <% end %>
+      </ul>
+    </div> <!-- card -->
   </div>
 </div> <!-- row -->
