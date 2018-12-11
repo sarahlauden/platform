@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :address do
-    line1 { "123 Way Street" }
+    sequence(:line1, 100) { |i| "#{i} Way Street"}
+
     city { "Lincoln" }
     state { "NE" }
     zip { "68521" }

@@ -9,4 +9,8 @@ module OwnerContactMap
   def owner
     contact_owner.owner
   end
+  
+  def owner= new_owner
+    ContactOwner.create contact: self, owner: new_owner
+  end
 end
