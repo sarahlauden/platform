@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_26_134612) do
+ActiveRecord::Schema.define(version: 2018_12_12_005348) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,7 +47,7 @@ ActiveRecord::Schema.define(version: 2018_11_26_134612) do
     t.string "value", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["value"], name: "index_emails_on_value", unique: true
+    t.index ["value"], name: "index_emails_on_value"
   end
 
   create_table "industries", force: :cascade do |t|

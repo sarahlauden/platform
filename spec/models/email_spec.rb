@@ -9,11 +9,6 @@ RSpec.describe Email, type: :model do
   
   it { should validate_presence_of :value }
   
-  describe 'validating uniqueness' do
-    before { create :email }
-    it { should validate_uniqueness_of(:value).case_insensitive }
-  end
-  
   describe 'validating format' do
     it { should allow_value('bob@example.com').for(:value) }
     it { should allow_value('bob123@example.com').for(:value) }
