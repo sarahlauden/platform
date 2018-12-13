@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_17_155228) do
+ActiveRecord::Schema.define(version: 2018_12_12_005348) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,32 @@ ActiveRecord::Schema.define(version: 2018_11_17_155228) do
     t.datetime "updated_at", null: false
     t.index ["key"], name: "index_access_tokens_on_key", unique: true
     t.index ["name"], name: "index_access_tokens_on_name", unique: true
+  end
+
+  create_table "addresses", force: :cascade do |t|
+    t.string "line1", null: false
+    t.string "line2"
+    t.string "city", null: false
+    t.string "state", null: false
+    t.string "zip", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "contact_owners", force: :cascade do |t|
+    t.integer "contact_id"
+    t.string "contact_type"
+    t.integer "owner_id"
+    t.string "owner_type"
+    t.index ["contact_id", "contact_type"], name: "index_contact_owners_on_contact_id_and_contact_type"
+    t.index ["owner_id", "owner_type"], name: "index_contact_owners_on_owner_id_and_owner_type"
+  end
+
+  create_table "emails", force: :cascade do |t|
+    t.string "value", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["value"], name: "index_emails_on_value"
   end
 
   create_table "industries", force: :cascade do |t|
@@ -62,6 +88,21 @@ ActiveRecord::Schema.define(version: 2018_11_17_155228) do
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_majors_on_name"
     t.index ["parent_id"], name: "index_majors_on_parent_id"
+  end
+
+  create_table "people", force: :cascade do |t|
+    t.string "first_name", null: false
+    t.string "middle_name"
+    t.string "last_name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "phones", force: :cascade do |t|
+    t.string "value", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["value"], name: "index_phones_on_value", unique: true
   end
 
   create_table "postal_codes", force: :cascade do |t|
