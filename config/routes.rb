@@ -17,5 +17,11 @@ Rails.application.routes.draw do
 
   resources :access_tokens, except: [:show]
 
+  resources :validations, only: [:index] do
+    collection do
+      get :report
+    end
+  end
+
   root to: "home#welcome"
 end
