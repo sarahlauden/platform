@@ -11,4 +11,15 @@ RSpec.shared_examples "contact" do |contact_type|
     
     it { should eq(person)  }
   end
+  
+  describe '#owner=' do
+    let(:person) { create :person }
+    let(:contact) { create contact_type }
+    
+    before { contact.owner = person }
+    subject { ContactOwner.last }
+
+    it { expect(subject.contact).to eq(contact) }
+    it { expect(subject.owner).to eq(person) }
+  end
 end

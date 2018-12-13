@@ -17,6 +17,20 @@ RSpec.describe Person, type: :model do
   it { should validate_presence_of :first_name }
   it { should validate_presence_of :last_name }
   
+  ###########
+  # Factories
+  ###########
+
+  describe 'person_with_contacts' do
+    let(:person) { create :person_with_contacts }
+    
+    subject { person }
+    
+    it { expect(subject.phones.count).to eq(2) }
+    it { expect(subject.emails.count).to eq(3) }
+    it { expect(subject.addresses.count).to eq(3) }
+  end
+  
   ##################
   # Instance methods
   ##################
