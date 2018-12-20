@@ -1,0 +1,5 @@
+<%% content_for :headline do %>
+  New <%= human_title %>
+<%% end %>
+
+<%%= render 'form', <%= singular_name %>: @<%= singular_name %> %>

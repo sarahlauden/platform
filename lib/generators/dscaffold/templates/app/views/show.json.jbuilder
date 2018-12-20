@@ -1,0 +1,1 @@
+json.<%= singular_name %> @<%= singular_name %>.to_show

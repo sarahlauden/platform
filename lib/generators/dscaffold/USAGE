@@ -1,0 +1,22 @@
+Description:
+    create scaffolding for a pre-existing model in our API
+
+Example:
+    rails generate dscaffold turtle_bot
+
+    This will create:
+        app/controllers/turtle_bots_controller.rb
+
+Available Template Variables:
+    class_name: TurtleBot
+    plural_class_name: TurtleBots
+
+    singular_name: turtle_bot
+    plural_name: turtle_bots
+
+    file_name: turtle_bot
+    plural_file_name: turtle_bots
+
+    human_name: Turtle bot
+    human_title: Turtle Bot
+    plural_human_title: Turtle Bots
