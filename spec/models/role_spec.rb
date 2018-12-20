@@ -11,4 +11,15 @@ RSpec.describe Role, type: :model do
     before { create :role }
     it { should validate_uniqueness_of(:name).case_insensitive }
   end
+  
+  ##################
+  # Instance methods
+  ##################
+
+  describe '#to_show' do
+    let(:role) { build :role, name: 'Role' }
+    subject { role.to_show }
+    
+    it { should eq({'name' => 'Role'}) }
+  end
 end
