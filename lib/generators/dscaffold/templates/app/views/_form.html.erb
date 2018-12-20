@@ -1,7 +1,7 @@
 <%%= form_with(model: <%= singular_name %>, local: true) do |form| %>
-  <%% if industry.errors.any? %>
+  <%% if <%= singular_name %>.errors.any? %>
     <div id="error_explanation">
-      <h2><%%= pluralize(industry.errors.count, "error") %> prohibited this <%= human_title %> from being saved:</h2>
+      <h2><%%= pluralize(<%= singular_name %>.errors.count, "error") %> prohibited this <%= human_title %> from being saved:</h2>
 
       <ul>
       <%% <%= singular_name %>.errors.full_messages.each do |message| %>
@@ -20,7 +20,7 @@
 
       <div class="actions">
         <%%= form.submit class: 'btn btn-primary' %>
-        <%%= link_to 'Cancel', <% plural_name %>_path, class: 'btn btn-secondary'%>
+        <%%= link_to 'Cancel', <%= plural_name %>_path, class: 'btn btn-secondary'%>
       </div>
     </div>
   </div>

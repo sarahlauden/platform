@@ -18,7 +18,6 @@ RSpec.describe <%= plural_class_name %>Controller, type: :routing do
       expect(:get => "/<%= plural_name %>/1/edit").to route_to("<%= plural_name %>#edit", :id => "1")
     end
 
-
     it "routes to #create" do
       expect(:post => "/<%= plural_name %>").to route_to("<%= plural_name %>#create")
     end
