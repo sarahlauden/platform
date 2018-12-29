@@ -10,6 +10,10 @@ RSpec.describe Person, type: :model do
   it { should have_many(:phones).through(:contact_owners) }
   it { should have_many(:addresses).through(:contact_owners) }
 
+  it { should have_many :program_memberships }
+  it { should have_many(:programs).through(:program_memberships) }
+  it { should have_many(:roles).through(:program_memberships) }
+
   #############
   # Validations
   #############

@@ -12,6 +12,14 @@ RSpec.describe Program, type: :model do
     it { should validate_uniqueness_of(:name).case_insensitive }
   end
   
+  ##############
+  # Associations 
+  ##############
+
+  it { should have_many :program_memberships }
+  it { should have_many(:people).through(:program_memberships) }
+  it { should have_many(:roles).through(:program_memberships) }
+  
   ##################
   # Instance methods
   ##################
