@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  resources :roles, except: [:show]
   devise_for :users
   
   get 'home/welcome'
@@ -8,6 +7,8 @@ Rails.application.routes.draw do
   resources :interests, except: [:show]
   resources :locations, only: [:index, :show]
   resources :majors, except: [:show]
+  resources :programs, except: [:show]
+  resources :roles, except: [:show]
   
   resources :people, only: [:index, :show]
 

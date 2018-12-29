@@ -11,4 +11,15 @@ RSpec.describe Program, type: :model do
     before { create :program }
     it { should validate_uniqueness_of(:name).case_insensitive }
   end
+  
+  ##################
+  # Instance methods
+  ##################
+
+  describe '#to_show' do
+    let(:program) { build :program, name: 'Program' }
+    subject { program.to_show }
+    
+    it { should eq({'name' => 'Program'}) }
+  end
 end
