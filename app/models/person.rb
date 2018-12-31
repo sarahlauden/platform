@@ -35,4 +35,8 @@ class Person < ApplicationRecord
   def find_membership program_id, role_id
     program_memberships.current.find_by(program_id: program_id, role_id: role_id)
   end
+  
+  def current_membership program_id
+    program_memberships.current.find_by program_id: program_id
+  end
 end

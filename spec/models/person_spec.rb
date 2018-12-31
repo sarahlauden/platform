@@ -168,4 +168,18 @@ RSpec.describe Person, type: :model do
       end
     end
   end
+  
+  describe '#current_membership(program_id)' do
+    let!(:person) { create :person }
+    let!(:program) { create :program }
+    let!(:old_role) { create :role, name: 'Old' }
+    let!(:new_role) { create :role, name: 'New' }
+
+    let!(:old_membership) { create :program_membership, person: person, program: program, role: old_role, start_date: Date.today-100, end_date: Date.today-10 }
+    let!(:new_membership) { create :program_membership, person: person, program: program, role: new_role, start_date: Date.today-9 }
+
+    subject { person.reload.current_membership(program.id) }
+    
+    it { should eq(new_membership) }
+  end
 end
