@@ -9,4 +9,12 @@ json.person do
     json.emails @person.emails
     json.addresses @person.addresses
   end
+  
+  json.program_memberships @person.program_memberships do |membership|
+    json.program membership.program.name
+    json.role membership.role.name
+    json.start_date membership.start_date
+    json.end_date membership.end_date
+    json.current membership.current?
+  end
 end
