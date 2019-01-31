@@ -35,10 +35,10 @@ group :production do
   gem 'capistrano', '~> 3.11.0'
   # rails specific capistrano funcitons
   gem 'capistrano-rails', '~> 1.4.0'
-  # Helps manage the delayed jobs worker process
-  gem 'capistrano3-delayed-job', '~> 1.0'
-  # Needed by delayed-job gem above
-  gem 'daemons'
+  ## Helps manage the delayed jobs worker process
+  #gem 'capistrano3-delayed-job', '~> 1.0'
+  ## Needed by delayed-job gem above
+  #gem 'daemons'
   # integrate bundler with capistrano
   gem 'capistrano-bundler'
   # Use Passenger Phusion app server on prod and staging servers
