@@ -1,4 +1,4 @@
-FROM ruby:2.4
+FROM ruby:2.4.4
 
 RUN apt-get update -yqq
 RUN apt-get install -yqq --no-install-recommends nodejs
@@ -11,4 +11,4 @@ ENV BUNDLE_PATH /gems
 RUN bundle install
 COPY . /usr/src/app/
 
-CMD ["rails", "s", "-p", "3020", "-b", "0.0.0.0"]
+CMD ["bundle", "exec", "rails", "s", "-p", "3020", "-b", "0.0.0.0"]

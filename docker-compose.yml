@@ -10,17 +10,15 @@ services:
       - "3020:3020"
     volumes:
       - .:/usr/src/app
-      - gem_cache:/gems
     env_file:
       - .env
 
-  database:
+  data-central-database:
     image: postgres
     env_file:
       - .env.database
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - db-data-central:/var/lib/postgresql/data
 
 volumes:
-  db-data:
-  gem_cache:
+  db-data-central:
