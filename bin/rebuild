@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# rebuild/reload the docker container
-docker-compose build data-central
-docker-compose stop data-central
-docker-compose up -d --force-recreate data-central

@@ -2,7 +2,7 @@ version: '3'
 
 services:
       
-  data-central:
+  platform-rails:
     build: 
       context: .
       dockerfile: Dockerfile
@@ -13,12 +13,12 @@ services:
     env_file:
       - .env
 
-  data-central-database:
+  platform-db:
     image: postgres
     env_file:
       - .env.database
     volumes:
-      - db-data-central:/var/lib/postgresql/data
+      - db-platform:/var/lib/postgresql/data
 
 volumes:
-  db-data-central:
+  db-platform:
