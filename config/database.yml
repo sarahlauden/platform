@@ -8,8 +8,8 @@ default: &default
 
 development:
   <<: *default
-  database: data-central_development
+  database: platform_development
 
 test:
   <<: *default
-  database: data-central_test
+  database: platform_test
