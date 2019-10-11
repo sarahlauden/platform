@@ -11,12 +11,15 @@ RUN apk add --update --no-cache \
     tzdata
 
 COPY Gemfile* /usr/src/app/
+COPY package.json /usr/src/app/
+COPY yarn.lock /usr/src/app/
 WORKDIR /usr/src/app
 
 ENV BUNDLE_PATH /gems
 
 RUN bundle install
-COPY . /usr/src/app/
 RUN yarn install --check-files
+
+COPY . /usr/src/app/
 
 CMD ["bundle", "exec", "rails", "s", "-p", "3020", "-b", "0.0.0.0"]
