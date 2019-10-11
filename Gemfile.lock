@@ -63,6 +63,8 @@ GEM
     bootsnap (1.4.5)
       msgpack (~> 1.0)
     builder (3.2.3)
+    bulk_insert (1.7.0)
+      activerecord (>= 3.2.0)
     byebug (11.0.1)
     capybara (3.29.0)
       addressable
@@ -286,6 +288,7 @@ PLATFORMS
 
 DEPENDENCIES
   bootsnap (>= 1.4.2)
+  bulk_insert
   byebug
   capybara (>= 2.15)
   codacy-coverage

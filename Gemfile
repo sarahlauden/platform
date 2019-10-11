@@ -57,6 +57,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'paranoia'
 gem 'will_paginate'
+gem 'bulk_insert'
 
 gem 'devise'
 gem 'devise_cas_authenticatable'
