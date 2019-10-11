@@ -6,7 +6,7 @@ RSpec.describe Major, type: :model do
   # Associations
   ##############
   
-  it { should belong_to :parent }
+  it { should belong_to(:parent).optional }
   it { should have_many :children }
 
   #############
