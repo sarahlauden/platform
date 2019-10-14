@@ -1,7 +1,6 @@
 version: '3'
 
 services:
-      
   platformweb:
     build: 
       context: .
@@ -10,6 +9,9 @@ services:
       - "3020:3020"
     volumes:
       - .:/usr/src/app
+      - node-modules:/usr/src/app/node_modules
+      - /usr/src/app/tmp
+      - /usr/src/app/log
     env_file:
       - .env
 
@@ -22,3 +24,4 @@ services:
 
 volumes:
   db-platform:
+  node-modules:

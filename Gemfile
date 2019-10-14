@@ -47,6 +47,9 @@ group :test do
   gem 'selenium-webdriver'
   # Easy installation and use of web drivers to run system tests with browsers
   gem 'webdrivers'
+
+  # Report test coverage
+  gem 'codacy-coverage'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -54,6 +57,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'paranoia'
 gem 'will_paginate'
+gem 'bulk_insert'
 
 gem 'devise'
 gem 'devise_cas_authenticatable'

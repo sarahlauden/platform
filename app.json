@@ -1,0 +1,14 @@
+{
+  "environments": {
+    "test": {
+      "buildpacks": [
+        { "url": "https://github.com/heroku/heroku-buildpack-google-chrome" },
+        { "url": "heroku/ruby" }
+      ],
+      "addons": ["heroku-postgresql:in-dyno"],
+      "scripts": {
+        "test": "bundle exec rspec"
+      }
+    }
+  }
+}

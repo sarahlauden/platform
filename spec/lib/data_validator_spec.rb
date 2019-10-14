@@ -22,7 +22,6 @@ RSpec.describe DataValidator do
     it { should include(User) }
     
     # don't include abstract or table-less models
-    it { should_not include(Delayed::Backend::ActiveRecord::Job) }
     it { should_not include(ApplicationRecord) }
   end
   
