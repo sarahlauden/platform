@@ -18,16 +18,11 @@
 /storage/*
 !/storage/.keep
 
-/node_modules
-/yarn-error.log
-
 /public/assets
 .byebug_history
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
-/config/deploy/production.rb
-/config/deploy/staging.rb
 
 .env*
 tmp/
