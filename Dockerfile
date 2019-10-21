@@ -4,7 +4,6 @@ FROM ruby:2.6.5-alpine
 RUN apk add --update --no-cache \
     build-base \
     postgresql-dev \
-    git \
     imagemagick \
     nodejs \
     yarn \
