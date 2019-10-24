@@ -1,4 +1,4 @@
-version: '3'
+version: "3.5"
 
 services:
   platformweb:
@@ -14,6 +14,8 @@ services:
       - /usr/src/app/log
     env_file:
       - .env
+    networks:
+      - bravendev
 
   platformdb:
     image: postgres
@@ -21,7 +23,15 @@ services:
       - .env.database
     volumes:
       - db-platform:/var/lib/postgresql/data
+    networks:
+      - bravendev
 
 volumes:
   db-platform:
   node-modules:
+
+# Note all Braven web app docker dev envs use this same network so they can talk to each other.
+# E.g. the hostname joinweb will resolve inside the ssoweb container if they are on the same docker network.
+networks:
+  bravendev:
+    name: braven_dev_network
