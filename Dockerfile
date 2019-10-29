@@ -7,7 +7,8 @@ RUN apk add --update --no-cache \
     imagemagick \
     nodejs \
     yarn \
-    tzdata
+    tzdata \
+    git
 
 COPY Gemfile* /usr/src/app/
 COPY package.json /usr/src/app/
