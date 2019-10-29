@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/vasilakisfil/rubycas-server-core
+  revision: dfc94f4f55e055d969a6fce599bf48099a4a2589
+  specs:
+    rubycas-server-core (0.2.1)
+      activesupport (>= 3.0)
+      r18n-core (~> 2.0.3)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -161,6 +169,7 @@ GEM
       method_source (~> 0.9.0)
     public_suffix (4.0.1)
     puma (3.12.1)
+    r18n-core (2.0.4)
     rack (2.0.7)
     rack-proxy (0.6.5)
       rack
@@ -230,6 +239,8 @@ GEM
     ruby_dep (1.5.0)
     rubycas-client (2.3.9)
       activesupport
+    rubycas-server-activerecord (0.0.3)
+      activerecord
     rubyzip (2.0.0)
     sass (3.7.4)
       sass-listen (~> 4.0.0)
@@ -317,6 +328,8 @@ DEPENDENCIES
   rails (~> 6.0.0)
   react-rails
   rspec-rails (~> 3.6)
+  rubycas-server-activerecord
+  rubycas-server-core!
   sass-rails (~> 5)
   selenium-webdriver
   shoulda-matchers

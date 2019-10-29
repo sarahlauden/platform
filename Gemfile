@@ -63,3 +63,6 @@ gem 'devise'
 gem 'devise_cas_authenticatable'
 
 gem 'react-rails'
+
+gem 'rubycas-server-core', git: 'https://github.com/vasilakisfil/rubycas-server-core'
+gem 'rubycas-server-activerecord'
