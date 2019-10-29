@@ -63,3 +63,5 @@ gem 'devise'
 gem 'devise_cas_authenticatable'
 
 gem 'react-rails'
+
+gem 'sentry-raven'
