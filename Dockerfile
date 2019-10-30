@@ -22,4 +22,4 @@ RUN yarn install --check-files
 
 COPY . /usr/src/app/
 
-CMD ["bundle", "exec", "rails", "s", "-p", "3020", "-b", "0.0.0.0"]
+CMD ["bundle", "exec", "guard", "-i"]
