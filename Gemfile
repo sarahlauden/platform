@@ -40,7 +40,8 @@ group :development do
 
   gem 'guard-rspec', require: false
   gem 'guard-livereload', require: false
-  gem "rack-livereload"
+  gem 'rack-livereload'
+  gem 'guard-webpack'
 end
 
 group :test do
