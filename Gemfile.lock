@@ -1,5 +1,7 @@
-PATH
-  remote: vendor/rubycas-server-core
+GIT
+  remote: https://github.com/bebraven/rubycas-server-core.git
+  revision: 650af2bc7d0368dd3b37da5168b1fc7e23eb03b2
+  branch: platform-compat
   specs:
     rubycas-server-core (0.2.1)
       activesupport (>= 3.0)

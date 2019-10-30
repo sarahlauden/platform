@@ -66,5 +66,6 @@ gem 'react-rails'
 
 gem 'sentry-raven'
 
-gem 'rubycas-server-core', path: '/usr/src/app/vendor/rubycas-server-core'
+# Using a branch for a time being to remove R18n until we decide what we want to do
+gem 'rubycas-server-core', github: 'bebraven/rubycas-server-core', branch: 'platform-compat'
 gem 'rubycas-server-activerecord'
