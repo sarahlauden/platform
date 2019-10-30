@@ -41,7 +41,8 @@ group :development do
   gem 'guard-rspec', require: false
   gem 'guard-livereload', require: false
   gem 'rack-livereload'
-  gem 'guard-webpack'
+  gem 'guard-webpacker'
+  gem 'webpacker-react', "~> 1.0.0.beta.1"
 end
 
 group :test do

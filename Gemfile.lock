@@ -141,8 +141,9 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
-    guard-webpack (0.1.2)
-      guard (< 3.0)
+    guard-webpacker (0.1.1)
+      guard (>= 2)
+      guard-compat (~> 1.0)
     http_parser.rb (0.6.0)
     i18n (1.7.0)
       concurrent-ruby (~> 1.0)
@@ -317,6 +318,8 @@ GEM
       activesupport (>= 4.2)
       rack-proxy (>= 0.6.1)
       railties (>= 4.2)
+    webpacker-react (1.0.0.beta.1)
+      webpacker
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.4)
@@ -340,7 +343,7 @@ DEPENDENCIES
   factory_bot_rails
   guard-livereload
   guard-rspec
-  guard-webpack
+  guard-webpacker
   jbuilder (~> 2.7)
   listen (>= 3.0.5, < 3.2)
   paranoia
@@ -363,6 +366,7 @@ DEPENDENCIES
   web-console (>= 3.3.0)
   webdrivers
   webpacker (~> 4.0)
+  webpacker-react (~> 1.0.0.beta.1)
   will_paginate
 
 RUBY VERSION

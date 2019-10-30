@@ -109,4 +109,13 @@ guard 'livereload' do
   watch(%r{config/locales/.+\.yml})
 end
 
-guard :webpack
+### Guard::Webpacker
+#  available options:
+#  - :bin (defaults to "webpack-dev-server") to run
+#  - :watch (defaults to "default") can be an array
+#  - :colors (defaults to 1)
+#  - :progress
+guard :webpacker do
+  watch('config/webpacker.yml')
+  watch(%r{^config/webpacker/(.+)$})
+end
