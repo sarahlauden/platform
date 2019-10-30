@@ -9,7 +9,6 @@ Rails.application.routes.draw do
   resources :majors, except: [:show]
   resources :programs, except: [:show]
   resources :roles, except: [:show]
-  
   resources :people, only: [:index, :show]
 
   resources :postal_codes, only: [:index, :show] do
@@ -28,4 +27,18 @@ Rails.application.routes.draw do
   end
 
   root to: "home#welcome"
+
+
+  # RubyCAS Routes
+  resources :cas, except: [:show]
+  get '/login', to: 'cas#login'
+  post '/login', to: 'cas#loginpost'
+  get '/logout', to: 'cas#logout'
+  get '/loginTicket', to: 'cas#loginTicket'
+  post '/loginTicket', to: 'cas#loginTicketPost'
+  get '/validate', to: 'cas#validate'
+  get '/serviceValidate', to: 'cas#serviceValidate'
+  get '/proxyValidate', to: 'cas#proxyValidate'
+  get '/proxy', to: 'cas#proxy'
+
 end
