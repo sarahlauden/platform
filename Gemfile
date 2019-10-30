@@ -66,5 +66,5 @@ gem 'react-rails'
 
 gem 'sentry-raven'
 
-gem 'rubycas-server-core', git: 'https://github.com/vasilakisfil/rubycas-server-core'
+gem 'rubycas-server-core', path: '/usr/src/app/vendor/rubycas-server-core'
 gem 'rubycas-server-activerecord'

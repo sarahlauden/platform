@@ -1,10 +1,8 @@
-GIT
-  remote: https://github.com/vasilakisfil/rubycas-server-core
-  revision: dfc94f4f55e055d969a6fce599bf48099a4a2589
+PATH
+  remote: vendor/rubycas-server-core
   specs:
     rubycas-server-core (0.2.1)
       activesupport (>= 3.0)
-      r18n-core (~> 2.0.3)
 
 GEM
   remote: https://rubygems.org/
@@ -172,7 +170,6 @@ GEM
       method_source (~> 0.9.0)
     public_suffix (4.0.1)
     puma (3.12.1)
-    r18n-core (2.0.4)
     rack (2.0.7)
     rack-proxy (0.6.5)
       rack
