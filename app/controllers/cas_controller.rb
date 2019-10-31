@@ -98,7 +98,7 @@ class CasController < ApplicationController
         render "Could not guess the CAS login URI. Please supply a submitToURI parameter with your request."
       end
     else
-      render #:erb, :login
+      render :login
     end
   end
 
@@ -122,7 +122,7 @@ class CasController < ApplicationController
       # generate another login ticket to allow for re-submitting the form
       @lt = generate_login_ticket.ticket
       status 500
-      return render :erb, :login
+      return render :login
     end
 
     # generate another login ticket to allow for re-submitting the form after a post
@@ -202,7 +202,7 @@ class CasController < ApplicationController
       status 401
     end
 
-    render :erb, :login
+    render :login
   end
 
   def logout
@@ -269,11 +269,11 @@ class CasController < ApplicationController
       # the redirect based on the user account type automatically.
 
       # redirect @service, 303
-      render :erb, :login
+      render :login
     elsif @continue_url
-      render :erb, :logout
+      render :logout
     else
-      render :erb, :login
+      render :login
     end
   end
 
@@ -319,7 +319,7 @@ class CasController < ApplicationController
     if @error
     end 
 
-    render :erb, :validate, :layout => false
+    render :validate, :layout => false
   end
   
   def serviceValidate
