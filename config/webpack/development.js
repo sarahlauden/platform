@@ -1,5 +1,8 @@
 process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 
 const environment = require('./environment')
+const webpackerReactconfigureHotModuleReplacement = require('webpacker-react/configure-hot-module-replacement')
 
-module.exports = environment.toWebpackConfig()
+const config = environment.toWebpackConfig()
+
+module.exports = webpackerReactconfigureHotModuleReplacement(config)
