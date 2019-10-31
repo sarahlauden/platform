@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/bebraven/rubycas-server-core.git
+  revision: 650af2bc7d0368dd3b37da5168b1fc7e23eb03b2
+  branch: platform-compat
+  specs:
+    rubycas-server-core (0.2.1)
+      activesupport (>= 3.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -233,6 +241,8 @@ GEM
     ruby_dep (1.5.0)
     rubycas-client (2.3.9)
       activesupport
+    rubycas-server-activerecord (0.0.3)
+      activerecord
     rubyzip (2.0.0)
     sass (3.7.4)
       sass-listen (~> 4.0.0)
@@ -322,6 +332,8 @@ DEPENDENCIES
   rails (~> 6.0.0)
   react-rails
   rspec-rails (~> 3.6)
+  rubycas-server-activerecord
+  rubycas-server-core!
   sass-rails (~> 5)
   selenium-webdriver
   sentry-raven

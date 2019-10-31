@@ -59,4 +59,10 @@ Rails.application.configure do
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+
+  # Host Authorization was introduced in Rails 6 to prevent against DNS.
+  # 0.0.0.0 and localhost are permitted, but we aren't using those to 
+  # communicate across containers. This line allows connection via the
+  # specified name.
+  config.hosts << "platformweb"
 end
