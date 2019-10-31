@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/bebraven/rubycas-server-core.git
-  revision: 650af2bc7d0368dd3b37da5168b1fc7e23eb03b2
+  revision: 37a7c6c181b890c2cb8d763953388244d6d2aca6
   branch: platform-compat
   specs:
     rubycas-server-core (0.2.1)
