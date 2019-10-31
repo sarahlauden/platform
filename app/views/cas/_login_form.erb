@@ -1,0 +1,32 @@
+<% if @log_out_of_services %>
+<!-- The purpose of this is to log out of all our dependent services, so a user
+     doesn't get trapped in a weird circle of logging out of Canvas, but still
+     being another user on BZ and thereby getting jerked around in a confusing
+     circle when she goes back to the home page.
+
+     Since it is a cross-domain, client side cookie, we had to implement this
+     using a helper method on the other side and an iframe on this side.
+-->
+  <iframe style="visibility: hidden; width: 1px; height: 1px;" src="//<%= @domain %>/users/clear_session_cookie"></iframe>
+<% end %>
+<form method="post" action="<%= @form_action || "login" %>" id="login-form"
+      onsubmit="submitbutton = document.getElementById('login-submit'); submitbutton.value='<%= t.notice.please_wait %>'; submitbutton.disabled=true; return true;">
+        <div><label id="username-label" for="username">
+          Email
+        </label><br />
+        <input class="form-control" autofocus="autofocus" type="text" id="username" name="username"
+               size="32" tabindex="1" accesskey="u" /></div>
+        <div><label id="password-label" for="password">
+          <%= t.label.password %>
+        </label><br />
+        <input class="form-control" type="password" id="password" name="password"
+               size="32" tabindex="2" accesskey="p" autocomplete="off" /></div>
+
+      <br />
+      <input type="hidden" id="lt" name="lt" value="<%= escape_html @lt %>" />
+      <input type="hidden" id="service" name="service" value="<%= escape_html @service %>" />
+      <div><input class="button-primary" name="commit" type="submit" value="Log in" /></div>
+      <div id="infoline">
+        <%= @infoline %>
+      </div>
+</form>
