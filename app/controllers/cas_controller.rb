@@ -1,5 +1,5 @@
 require 'rubycas-server-core/util'
-require 'rubycas-server-core/tickets/'
+require 'rubycas-server-core/tickets'
 require 'rubycas-server-core/tickets/validations'
 require 'rubycas-server-core/tickets/generations'
 
@@ -71,7 +71,7 @@ class CasController < ApplicationController
     end
 
     c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']
-    lt = generate_login_ticket(c)
+    lt = LT::generate_login_ticket(c)
 
     $LOG.debug("Rendering login form with lt: #{lt}, service: #{@service}, renew: #{@renew}, gateway: #{@gateway}")
 
@@ -122,13 +122,13 @@ class CasController < ApplicationController
     if error = validate_login_ticket(@lt)
       @message = {:type => 'mistake', :message => error}
       # generate another login ticket to allow for re-submitting the form
-      @lt = generate_login_ticket.ticket
+      @lt = LT.generate_login_ticket.ticket
       status 500
       return render :login
     end
 
     # generate another login ticket to allow for re-submitting the form after a post
-    @lt = generate_login_ticket.ticket
+    @lt = LT.generate_login_ticket.ticket
 
     $LOG.debug("Logging in with username: #{@username}, lt: #{@lt}, service: #{@service}, auth: #{settings.auth.inspect}")
 
@@ -199,7 +199,7 @@ class CasController < ApplicationController
     rescue Core::Authenticator::AuthenticatorError => e
       $LOG.error(e)
       # generate another login ticket to allow for re-submitting the form
-      @lt = generate_login_ticket.ticket
+      @lt = LT.generate_login_ticket.ticket
       @message = {:type => 'mistake', :message => e.to_s}
       status 401
     end
@@ -220,12 +220,12 @@ class CasController < ApplicationController
 
     @gateway = params['gateway'] == 'true' || params['gateway'] == '1'
 
-    tgt = RubyCAS::Server::Core::Tickets::LT.find_by(ticket: request.cookies['tgt'])
+    tgt = LT.find_by(ticket: request.cookies['tgt'])
 
     response.delete_cookie 'tgt'
 
     if tgt
-      RubyCAS::Server::Core::Tickets::LT.transaction do
+      LT.transaction do
         $LOG.debug("Deleting Service/Proxy Tickets for '#{tgt}' for user '#{tgt.username}'")
         tgt.granted_service_tickets.each do |st|
           send_logout_notification_for_service_ticket(st) if config[:enable_single_sign_out]
@@ -293,7 +293,7 @@ class CasController < ApplicationController
   def loginTicketPost
 
     c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']
-    lt = generate_login_ticket(c)
+    lt = LT::generate_login_ticket(c)
 
     $LOG.debug("Dispensing login ticket #{lt} to host #{(request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']).inspect}")
 
@@ -418,49 +418,48 @@ class CasController < ApplicationController
   #   render :builder, :proxy
   # end
 
-# Helpers
-def response_status_from_error(error)
-  case error.code.to_s
-  when /^INVALID_/, 'BAD_PGT'
-    422
-  when 'INTERNAL_ERROR'
-    500
-  else
-    500
-  end
-end
-
-def serialize_extra_attribute(builder, key, value)
-  if value.kind_of?(String)
-    builder.tag! key, value
-  elsif value.kind_of?(Numeric)
-    builder.tag! key, value.to_s
-  else
-    builder.tag! key do
-      builder.cdata! value.to_yaml
+  # Helpers
+  def response_status_from_error(error)
+    case error.code.to_s
+    when /^INVALID_/, 'BAD_PGT'
+      422
+    when 'INTERNAL_ERROR'
+      500
+    else
+      500
     end
   end
-end
 
-def compile_template(engine, data, options, views)
-  super engine, data, options, @custom_views || views
-rescue Errno::ENOENT
-  raise unless @custom_views
-  super engine, data, options, views
-end
-
-def ip_allowed?(ip)
-  require 'ipaddr'
-end
-
-helpers do
-  def authenticated?
-    @authenticated
+  def serialize_extra_attribute(builder, key, value)
+    if value.kind_of?(String)
+      builder.tag! key, value
+    elsif value.kind_of?(Numeric)
+      builder.tag! key, value.to_s
+    else
+      builder.tag! key do
+        builder.cdata! value.to_yaml
+      end
+    end
   end
 
-  def authenticated_username
-    @authenticated_username
+  def compile_template(engine, data, options, views)
+    super engine, data, options, @custom_views || views
+  rescue Errno::ENOENT
+    raise unless @custom_views
+    super engine, data, options, views
   end
-end
 
+  def ip_allowed?(ip)
+    require 'ipaddr'
+  end
+
+  helpers do
+    def authenticated?
+      @authenticated
+    end
+
+    def authenticated_username
+      @authenticated_username
+    end
+  end
 end
