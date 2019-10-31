@@ -1,10 +1,12 @@
 require 'rubycas-server-core/util'
+require 'rubycas-server-core/tickets/'
 require 'rubycas-server-core/tickets/validations'
 require 'rubycas-server-core/tickets/generations'
 
 class CasController < ApplicationController
   $LOG = Logger.new(STDOUT)
   include RubyCAS::Server::Core::Util
+  include RubyCAS::Server::Core::Tickets
   include RubyCAS::Server::Core::Tickets::Validations
   include RubyCAS::Server::Core::Tickets::Generations
 
@@ -45,7 +47,7 @@ class CasController < ApplicationController
           $LOG.info("Authentication renew explicitly requested. Proceeding with CAS login for service #{@service.inspect}.")
         elsif tgt && !tgt_error
           $LOG.debug("Valid ticket granting ticket detected.")
-          st = generate_service_ticket(@service, tgt.username, tgt)
+          st = ST.generate_service_ticket(@service, tgt.username, tgt)
           service_with_ticket = service_uri_with_ticket(@service, st)
           $LOG.info("User '#{tgt.username}' authenticated based on ticket granting cookie. Redirecting to service '#{@service}'.")
           redirect service_with_ticket, 303 # response code 303 means "See Other" (see Appendix B in CAS Protocol spec)
@@ -174,7 +176,7 @@ class CasController < ApplicationController
           $LOG.info("Successfully authenticated user '#{@username}' at '#{tgt.client_hostname}'. No service param was given, so we will not redirect.")
           @message = {:type => 'confirmation', :message => "You have successfully logged in."}
         else
-          @st = generate_service_ticket(@service, @username, tgt)
+          @st = ST.generate_service_ticket(@service, @username, tgt)
 
           begin
             service_with_ticket = service_uri_with_ticket(@service, @st)
@@ -218,32 +220,33 @@ class CasController < ApplicationController
 
     @gateway = params['gateway'] == 'true' || params['gateway'] == '1'
 
-    tgt = RubyCAS::Server::Core::Tickets::LT.find_by(request.cookies['tgt'])
+    tgt = RubyCAS::Server::Core::Tickets::LT.find_by(ticket: request.cookies['tgt'])
 
     response.delete_cookie 'tgt'
 
     if tgt
-      # RubyCAS::Server::Core::Tickets.transaction do
-      #   $LOG.debug("Deleting Service/Proxy Tickets for '#{tgt}' for user '#{tgt.username}'")
-      #   tgt.granted_service_tickets.each do |st|
-      #     send_logout_notification_for_service_ticket(st) if config[:enable_single_sign_out]
-      #     # TODO: Maybe we should do some special handling if send_logout_notification_for_service_ticket fails?
-      #     #       (the above method returns false if the POST results in a non-200 HTTP response).
-      #     $LOG.debug "Deleting #{st.class.name.demodulize} #{st.ticket.inspect} for service #{st.service}."
-      #     st.destroy
-      #   end
+      RubyCAS::Server::Core::Tickets::LT.transaction do
+        $LOG.debug("Deleting Service/Proxy Tickets for '#{tgt}' for user '#{tgt.username}'")
+        tgt.granted_service_tickets.each do |st|
+          send_logout_notification_for_service_ticket(st) if config[:enable_single_sign_out]
+          # TODO: Maybe we should do some special handling if send_logout_notification_for_service_ticket fails?
+          #       (the above method returns false if the POST results in a non-200 HTTP response).
+          $LOG.debug "Deleting #{st.class.name.demodulize} #{st.ticket.inspect} for service #{st.service}."
+          st.destroy
+        end
 
-      #   # pgts = CASServer::Model::ProxyGrantingTicket.find(:all,
-      #   #   :conditions => [CASServer::Model::ServiceTicket.quoted_table_name+".username = ?", tgt.username],
-      #   #   :include => :service_ticket)
-      #   # pgts.each do |pgt|
-      #   #   $LOG.debug("Deleting Proxy-Granting Ticket '#{pgt}' for user '#{pgt.service_ticket.username}'")
-      #   #   pgt.destroy
-      #   # end
+        # Not implemented....yet
+        # pgts = CASServer::Model::ProxyGrantingTicket.find(:all,
+        #   :conditions => [CASServer::Model::ServiceTicket.quoted_table_name+".username = ?", tgt.username],
+        #   :include => :service_ticket)
+        # pgts.each do |pgt|
+        #   $LOG.debug("Deleting Proxy-Granting Ticket '#{pgt}' for user '#{pgt.service_ticket.username}'")
+        #   pgt.destroy
+        # end
 
-      #   $LOG.debug("Deleting #{tgt.class.name.demodulize} '#{tgt}' for user '#{tgt.username}'")
-      #   tgt.destroy
-      # end
+        $LOG.debug("Deleting #{tgt.class.name.demodulize} '#{tgt}' for user '#{tgt.username}'")
+        tgt.destroy
+      end
 
       $LOG.info("User '#{tgt.username}' logged out.")
     else
