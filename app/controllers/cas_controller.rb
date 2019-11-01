@@ -17,7 +17,7 @@ class CasController < ApplicationController
     headers['Expires'] = (Time.now - 1.year).rfc2822
 
     # optional params
-    @service = clean_service_url(params['service'])
+    @service = Utils.clean_service_url(params['service'])
     @renew = params['renew']
     @gateway = params['gateway'] == 'true' || params['gateway'] == '1'
 
@@ -104,7 +104,7 @@ class CasController < ApplicationController
   end
 
   def loginpost
-    @service = clean_service_url(params['service'])
+    @service = Utils.clean_service_url(params['service'])
 
     @username = params['username'].downcase # this ensures we always use lowercase for ease of case comparison throughout the system
     @password = params['password']
@@ -214,7 +214,7 @@ class CasController < ApplicationController
 
     # BZ modification: always use default service so logout/login goes back to our main
     # site (which can redirect) regardless of where they came from
-    @service = clean_service_url(params['service'] || 'http://canvasweb/login/cas') # params['service'] || params['destination'])
+    @service = Utils.clean_service_url(params['service'] || 'http://canvasweb/login/cas') # params['service'] || params['destination'])
     @continue_url = params['url']
 
     @gateway = params['gateway'] == 'true' || params['gateway'] == '1'
@@ -303,7 +303,7 @@ class CasController < ApplicationController
 
   def validate
     # required
-    @service = clean_service_url(params['service'])
+    @service = Utils.clean_service_url(params['service'])
     @ticket = params['ticket']
     # optional
     @renew = params['renew']
@@ -320,11 +320,8 @@ class CasController < ApplicationController
   end
   
   def serviceValidate
-    # force xml content type
-    content_type 'text/xml', :charset => 'utf-8'
-
     # required
-    @service = clean_service_url(params['service'])
+    @service = Utils.clean_service_url(params['service'])
     @ticket = params['ticket']
     # optional
     @pgt_url = params['pgtUrl']
@@ -335,16 +332,17 @@ class CasController < ApplicationController
 
     if @success
       @username = st.username
-      # if @pgt_url
-      #   pgt = generate_proxy_granting_ticket(@pgt_url, st)
-      #   @pgtiou = pgt.iou if pgt
-      # end
+      if @pgt_url
+        raise NotImplementedError
+        pgt = generate_proxy_granting_ticket(@pgt_url, st)
+        @pgtiou = pgt.iou if pgt
+      end
       @extra_attributes = st.granted_by_tgt.extra_attributes || {}
     end
 
     status response_status_from_error(@error) if @error
 
-    render :builder
+    render :builder, content_type: 'text/xml'
   end
   
   def proxyValidate
@@ -353,7 +351,7 @@ class CasController < ApplicationController
     content_type 'text/xml', :charset => 'utf-8'
 
     # required
-    @service = clean_service_url(params['service'])
+    @service = Utils.clean_service_url(params['service'])
     @ticket = params['ticket']
     # optional
     @pgt_url = params['pgtUrl']
@@ -368,14 +366,16 @@ class CasController < ApplicationController
     if @success
       @username = t.username
 
-      # if t.kind_of? CASServer::Model::ProxyTicket
-      #   @proxies << t.granted_by_pgt.service_ticket.service
-      # end
+      if t.kind_of? CASServer::Model::ProxyTicket
+        raise NotImplementedError
+        @proxies << t.granted_by_pgt.service_ticket.service
+      end
 
-      # if @pgt_url
-      #   pgt = generate_proxy_granting_ticket(@pgt_url, t)
-      #   @pgtiou = pgt.iou if pgt
-      # end
+      if @pgt_url
+        raise NotImplementedError
+        pgt = generate_proxy_granting_ticket(@pgt_url, t)
+        @pgtiou = pgt.iou if pgt
+      end
 
       @extra_attributes = t.granted_by_tgt.extra_attributes || {}
     end
