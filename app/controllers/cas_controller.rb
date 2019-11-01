@@ -71,7 +71,7 @@ class CasController < ApplicationController
     end
 
     c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']
-    lt = LT::generate_login_ticket(c)
+    lt = LT.generate_login_ticket(c)
 
     $LOG.debug("Rendering login form with lt: #{lt}, service: #{@service}, renew: #{@renew}, gateway: #{@gateway}")
 
@@ -96,8 +96,7 @@ class CasController < ApplicationController
       if @form_action
         render :login_form
       else
-        status 500
-        render "Could not guess the CAS login URI. Please supply a submitToURI parameter with your request."
+        render :json => {:response => "Could not guess the CAS login URI. Please supply a submitToURI parameter with your request."},status: :internal_server_error
       end
     else
       render :login
@@ -293,7 +292,7 @@ class CasController < ApplicationController
   def loginTicketPost
 
     c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']
-    lt = LT::generate_login_ticket(c)
+    lt = LT.generate_login_ticket(c)
 
     $LOG.debug("Dispensing login ticket #{lt} to host #{(request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']).inspect}")
 
@@ -303,21 +302,16 @@ class CasController < ApplicationController
   end
 
   def validate
-    if ip_allowed?(request.ip)
-      # required
-      @service = clean_service_url(params['service'])
-      @ticket = params['ticket']
-      # optional
-      @renew = params['renew']
+    # required
+    @service = clean_service_url(params['service'])
+    @ticket = params['ticket']
+    # optional
+    @renew = params['renew']
 
-      st, @error = validate_service_ticket(@service, @ticket)
-      @success = st && !@error
+    st, @error = validate_service_ticket(@service, @ticket)
+    @success = st && !@error
 
-      @username = st.username if @success
-    else
-      @success = false
-      @error = Error.new(:INVALID_REQUEST, 'The IP address of this service has not been allowed')
-    end
+    @username = st.username if @success
 
     if @error
     end 
@@ -329,28 +323,23 @@ class CasController < ApplicationController
     # force xml content type
     content_type 'text/xml', :charset => 'utf-8'
 
-    if ip_allowed?(request.ip)
-      # required
-      @service = clean_service_url(params['service'])
-      @ticket = params['ticket']
-      # optional
-      @pgt_url = params['pgtUrl']
-      @renew = params['renew']
+    # required
+    @service = clean_service_url(params['service'])
+    @ticket = params['ticket']
+    # optional
+    @pgt_url = params['pgtUrl']
+    @renew = params['renew']
 
-      st, @error = validate_service_ticket(@service, @ticket)
-      @success = st && !@error
+    st, @error = validate_service_ticket(@service, @ticket)
+    @success = st && !@error
 
-      if @success
-        @username = st.username
-        # if @pgt_url
-        #   pgt = generate_proxy_granting_ticket(@pgt_url, st)
-        #   @pgtiou = pgt.iou if pgt
-        # end
-        @extra_attributes = st.granted_by_tgt.extra_attributes || {}
-      end
-    else
-      @success = false
-      @error = Error.new(:INVALID_REQUEST, 'The IP address of this service has not been allowed')
+    if @success
+      @username = st.username
+      # if @pgt_url
+      #   pgt = generate_proxy_granting_ticket(@pgt_url, st)
+      #   @pgtiou = pgt.iou if pgt
+      # end
+      @extra_attributes = st.granted_by_tgt.extra_attributes || {}
     end
 
     status response_status_from_error(@error) if @error
@@ -358,65 +347,61 @@ class CasController < ApplicationController
     render :builder
   end
   
-  # def proxyValidate
-  #   # force xml content type
-  #   content_type 'text/xml', :charset => 'utf-8'
+  def proxyValidate
+    raise NotImplementedError
+    # force xml content type
+    content_type 'text/xml', :charset => 'utf-8'
 
-  #   if ip_allowed?(request.ip)
+    # required
+    @service = clean_service_url(params['service'])
+    @ticket = params['ticket']
+    # optional
+    @pgt_url = params['pgtUrl']
+    @renew = params['renew']
 
-  #     # required
-  #     @service = clean_service_url(params['service'])
-  #     @ticket = params['ticket']
-  #     # optional
-  #     @pgt_url = params['pgtUrl']
-  #     @renew = params['renew']
+    @proxies = []
 
-  #     @proxies = []
+    t, @error = validate_proxy_ticket(@service, @ticket)
+    @success = t && !@error
 
-  #     t, @error = validate_proxy_ticket(@service, @ticket)
-  #     @success = t && !@error
+    @extra_attributes = {}
+    if @success
+      @username = t.username
 
-  #     @extra_attributes = {}
-  #     if @success
-  #       @username = t.username
+      # if t.kind_of? CASServer::Model::ProxyTicket
+      #   @proxies << t.granted_by_pgt.service_ticket.service
+      # end
 
-  #       # if t.kind_of? CASServer::Model::ProxyTicket
-  #       #   @proxies << t.granted_by_pgt.service_ticket.service
-  #       # end
+      # if @pgt_url
+      #   pgt = generate_proxy_granting_ticket(@pgt_url, t)
+      #   @pgtiou = pgt.iou if pgt
+      # end
 
-  #       # if @pgt_url
-  #       #   pgt = generate_proxy_granting_ticket(@pgt_url, t)
-  #       #   @pgtiou = pgt.iou if pgt
-  #       # end
+      @extra_attributes = t.granted_by_tgt.extra_attributes || {}
+    end
 
-  #       @extra_attributes = t.granted_by_tgt.extra_attributes || {}
-  #     end
-  #   else
-  #     @success = false
-  #     @error = Error.new(:INVALID_REQUEST, 'The IP address of this service has not been allowed')
-  #   end
+    status response_status_from_error(@error) if @error
 
-  #   status response_status_from_error(@error) if @error
+    render :builder, :proxy_validate
+  end
 
-  #   render :builder, :proxy_validate
-  # end
+  def proxy
+    raise NotImplementedError
+    # required
+    @ticket = params['pgt']
+    @target_service = params['targetService']
 
-  # def proxy
-  #   # required
-  #   @ticket = params['pgt']
-  #   @target_service = params['targetService']
+    pgt, @error = validate_proxy_granting_ticket(@ticket)
+    @success = pgt && !@error
 
-  #   pgt, @error = validate_proxy_granting_ticket(@ticket)
-  #   @success = pgt && !@error
+    if @success
+      @pt = generate_proxy_ticket(@target_service, pgt)
+    end
 
-  #   if @success
-  #     @pt = generate_proxy_ticket(@target_service, pgt)
-  #   end
+    status response_status_from_error(@error) if @error
 
-  #   status response_status_from_error(@error) if @error
-
-  #   render :builder, :proxy
-  # end
+    render :builder, :proxy
+  end
 
   # Helpers
   def response_status_from_error(error)
@@ -447,10 +432,6 @@ class CasController < ApplicationController
   rescue Errno::ENOENT
     raise unless @custom_views
     super engine, data, options, views
-  end
-
-  def ip_allowed?(ip)
-    require 'ipaddr'
   end
 
   helpers do
