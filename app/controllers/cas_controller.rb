@@ -96,7 +96,7 @@ class CasController < ApplicationController
       if @form_action
         render :login_form
       else
-        render :json => {:response => "Could not guess the CAS login URI. Please supply a submitToURI parameter with your request."},status: :internal_server_error
+        render :json => {:response => "Could not guess the CAS login URI. Please supply a submitToURI parameter with your request."}, status: :internal_server_error
       end
     else
       render :login
@@ -122,8 +122,7 @@ class CasController < ApplicationController
       @message = {:type => 'mistake', :message => error}
       # generate another login ticket to allow for re-submitting the form
       @lt = LT.generate_login_ticket.ticket
-      status 500
-      return render :login
+      return render :login, status: :internal_server_error
     end
 
     # generate another login ticket to allow for re-submitting the form after a post
@@ -193,14 +192,14 @@ class CasController < ApplicationController
       else
         $LOG.warn("Invalid credentials given for user '#{@username}'")
         @message = {:type => 'mistake', :message => "Incorrect username or password."}
-        status 401
+        render :json => @message, status: :unauthorized
       end
     rescue Core::Authenticator::AuthenticatorError => e
       $LOG.error(e)
       # generate another login ticket to allow for re-submitting the form
       @lt = LT.generate_login_ticket.ticket
       @message = {:type => 'mistake', :message => e.to_s}
-      status 401
+      render :json => @message, status: :unauthorized
     end
 
     render :login
@@ -282,7 +281,7 @@ class CasController < ApplicationController
   def loginTicket
     $LOG.error("Tried to use login ticket dispenser with get method!")
 
-    render :json => {:response => "To generate a login ticket, you must make a POST request."},status: :unprocessable_entity
+    render :json => {:response => "To generate a login ticket, you must make a POST request."}, status: :unprocessable_entity
 
     
   end
