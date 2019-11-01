@@ -50,10 +50,10 @@ class CasController < ApplicationController
           st = ST.generate_service_ticket(@service, tgt.username, tgt)
           service_with_ticket = service_uri_with_ticket(@service, st)
           $LOG.info("User '#{tgt.username}' authenticated based on ticket granting cookie. Redirecting to service '#{@service}'.")
-          redirect service_with_ticket, 303 # response code 303 means "See Other" (see Appendix B in CAS Protocol spec)
+          redirect_to service_with_ticket, 303 # response code 303 means "See Other" (see Appendix B in CAS Protocol spec)
         elsif @gateway
           $LOG.info("Redirecting unauthenticated gateway request to service '#{@service}'.")
-          redirect @service, 303
+          redirect_to @service, 303
         else
           $LOG.info("Proceeding with CAS login for service #{@service.inspect}.")
         end
@@ -182,7 +182,7 @@ class CasController < ApplicationController
             service_with_ticket = service_uri_with_ticket(@service, @st)
 
             $LOG.info("Redirecting authenticated user '#{@username}' at '#{@st.client_hostname}' to service '#{@service}'")
-            redirect service_with_ticket, 303 # response code 303 means "See Other" (see Appendix B in CAS Protocol spec)
+            redirect_to service_with_ticket, 303 # response code 303 means "See Other" (see Appendix B in CAS Protocol spec)
           rescue URI::InvalidURIError
             $LOG.error("The service '#{@service}' is not a valid URI!")
             @message = {
@@ -271,7 +271,7 @@ class CasController < ApplicationController
       # default service which is good for us too as we can then handle
       # the redirect based on the user account type automatically.
 
-      # redirect @service, 303
+      # redirect_to @service, 303
       render :login
     elsif @continue_url
       render :logout
