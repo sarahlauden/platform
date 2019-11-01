@@ -6,7 +6,10 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
+      # rails server (Guardfile, config/environments/development.rb)
       - "3020:3020"
+      # webpack-dev-server (config/webpacker.yml)
+      - "3035:3035"
     volumes:
       - .:/usr/src/app
       - node-modules:/usr/src/app/node_modules

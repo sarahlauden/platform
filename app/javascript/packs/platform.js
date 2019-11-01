@@ -5,6 +5,14 @@
 
 import React from 'react'
 import ReactDOM from 'react-dom'
+import WebpackerReact from 'webpacker-react'
+import Turbolinks from 'turbolinks'
+
+import Hello from 'components/hello'
+
+Turbolinks.start()
+
+WebpackerReact.setup({Hello})
 
 // Use axe a11y testing in development.
 if (process.env.NODE_ENV !== 'production') {

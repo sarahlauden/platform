@@ -65,4 +65,7 @@ Rails.application.configure do
   # communicate across containers. This line allows connection via the
   # specified name.
   config.hosts << "platformweb"
+
+  # Add Rack::LiveReload to the bottom of the middleware stack with the default options:
+  config.middleware.insert_after ActionDispatch::Static, Rack::LiveReload
 end
