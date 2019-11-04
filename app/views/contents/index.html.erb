@@ -1,32 +1,12 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Contents</h1>
+<h1>Content</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Body</th>
-      <th>Published at</th>
-      <th>Type</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @contents.each do |content| %>
-      <tr>
-        <td><%= content.title %></td>
-        <td><%= content.body %></td>
-        <td><%= content.published_at %></td>
-        <td><%= content.content_type %></td>
-        <td><%= link_to 'Show', content %></td>
-        <td><%= link_to 'Edit', edit_content_path(content) %></td>
-        <td><%= link_to 'Destroy', content, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<ul>
+  <% @contents.each do |content| %>
+    <li><%= content.title %> (<%= link_to 'Show', content %> | <%= link_to 'Edit', edit_content_path(content) %> | <%= link_to 'Destroy', content, method: :delete, data: { confirm: 'Are you sure?' } %>)</li>
+  <% end %>
+</ul>
 
 <br>
 
