@@ -5,7 +5,7 @@ RSpec.describe "contents/new", type: :view do
     assign(:content, Content.new(
       :title => "MyString",
       :body => "MyText",
-      :type => "MyText"
+      :content_type => "MyText"
     ))
   end
 
@@ -18,7 +18,7 @@ RSpec.describe "contents/new", type: :view do
 
       assert_select "textarea[name=?]", "content[body]"
 
-      assert_select "textarea[name=?]", "content[type]"
+      assert_select "input[name=?]", "content[content_type]"
     end
   end
 end
