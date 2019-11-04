@@ -63,7 +63,12 @@ In rare cases, you may need to bypass docker-compose and use docker directly to 
 
     docker volume rm platform_db-platform
 
-To bring the container back up after a rebuild, run:
+If you change JavaScript dependencies, you may need to run `yarn` in the container:
+
+    docker-compose down
+    docker-compose run platformweb yarn install --check-files
+
+In all cases, to bring the container back up after a rebuild, run:
 
     docker-compose up -d
 
