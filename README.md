@@ -33,6 +33,9 @@ Now create the needed databases:
 We've configured Docker to run our Rails app on port 3020, so go to http://localhost:3020 in your favorite browser. If
 everything's working correctly, you should be brought to the app's homepage.
 
+If you have a `127.0.0.1   platformweb` entry in your `/etc/hosts` file, and are using the [nginx-dev
+container](https://github.com/beyond-z/nginx-dev), you can also access the Platform app via http://platformweb.
+
 ### Dummy Data
 
 In dev or staging environments, we may want a few people, contacts, etc to work with. Unlike the seed data above, 
