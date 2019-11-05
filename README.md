@@ -12,7 +12,7 @@ First, we need to copy a couple of environment files in the app directory:
     cp .env.example .env
     cp .env.database.example .env.database
 
-Be sure to set the `SSU_URL` variable in `.env` to point to whatever CAS SSO server you're using.
+Be sure to set the `SSO_URL` variable in `.env` to point to whatever CAS SSO server you're using.
 
 You don't really need to change the database passwords in these files, so we're doing this mainly to conform to "best
 practices" for Rails apps in general. But if you do want to pick a different database password, make sure it matches in
