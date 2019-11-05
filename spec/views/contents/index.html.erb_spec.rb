@@ -5,21 +5,19 @@ RSpec.describe "contents/index", type: :view do
     assign(:contents, [
       Content.create!(
         :title => "Title",
-        :body => "MyText",
-        :content_type => "MyText"
+        :body => "MyBody",
+        :content_type => "MyContentType"
       ),
       Content.create!(
         :title => "Title",
-        :body => "MyText",
-        :content_type => "MyText"
+        :body => "MyBody",
+        :content_type => "MyContentType"
       )
     ])
   end
 
   it "renders a list of contents" do
     render
-    assert_select "tr>td", :text => "Title".to_s, :count => 2
-    assert_select "tr>td", :text => "MyText".to_s, :count => 2
-    assert_select "tr>td", :text => "MyText".to_s, :count => 2
+    assert_select "ul>li", :text => /Title/, :count => 2
   end
 end

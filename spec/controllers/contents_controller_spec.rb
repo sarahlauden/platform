@@ -24,6 +24,12 @@ require 'rails_helper'
 # `rails-controller-testing` gem.
 
 RSpec.describe ContentsController, type: :controller do
+  render_views
+  let(:user) { create :user, admin: true }
+
+  before do
+    sign_in user
+  end
 
   # This should return the minimal set of attributes required to create a valid
   # Content. As you add validations to Content, be sure to
@@ -35,6 +41,7 @@ RSpec.describe ContentsController, type: :controller do
   let(:invalid_attributes) {
     skip("Add a hash of attributes invalid for your model")
   }
+
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
