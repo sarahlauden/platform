@@ -1,0 +1,13 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Content</h1>
+
+<ul>
+  <% @contents.each do |content| %>
+    <li><%= content.title %> (<%= link_to 'Show', content %> | <%= link_to 'Edit', edit_content_path(content) %> | <%= link_to 'Destroy', content, method: :delete, data: { confirm: 'Are you sure?' } %>)</li>
+  <% end %>
+</ul>
+
+<br>
+
+<%= link_to 'New Content', new_content_path %>
