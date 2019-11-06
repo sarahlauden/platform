@@ -16,8 +16,6 @@ RSpec.describe "contents/new", type: :view do
 
       assert_select "input[name=?]", "content[title]"
 
-      assert_select "textarea[name=?]", "content[body]"
-
       assert_select "input[name=?]", "content[content_type]"
     end
   end
