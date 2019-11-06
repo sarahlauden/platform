@@ -11,5 +11,5 @@ require 'rails_helper'
 #   end
 # end
 RSpec.describe ContentsHelper, type: :helper do
-  pending "add some examples to (or delete) #{__FILE__}"
+  pending "we don't have any Content helpers yet"
 end

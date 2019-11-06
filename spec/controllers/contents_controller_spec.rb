@@ -35,11 +35,11 @@ RSpec.describe ContentsController, type: :controller do
   # Content. As you add validations to Content, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    { title: "MyTitle", body: "<html></html>" }
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    skip("We don't do validation yet.")
   }
 
 
@@ -104,13 +104,14 @@ RSpec.describe ContentsController, type: :controller do
   describe "PUT #update" do
     context "with valid params" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        { title: "My New Title",body: "<p>words :)</p>" }
       }
 
       it "updates the requested content" do
         content = Content.create! valid_attributes
         put :update, params: {id: content.to_param, content: new_attributes}, session: valid_session
         content.reload
+        expect(content).to have_attributes(new_attributes)
         skip("Add assertions for updated state")
       end
 
