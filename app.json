@@ -7,8 +7,9 @@
       ],
       "addons": ["heroku-postgresql:in-dyno"],
       "scripts": {
+        "setup": "bundle exec rake db:migrate db:seed",
         "test-setup": "bundle exec rake webpacker:install",
-        "test": "bundle exec rspec"
+        "test": "bundle exec rspec && yarn test"
       }
     }
   }
