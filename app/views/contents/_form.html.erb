@@ -20,7 +20,25 @@
 
   <div class="field">
     <%= form.label :body %>
-    <%= react_component('ContentEditor', { data: content.body }) %>
+    <%= react_component('ContentEditor', { data: content.body,
+        contentParts: [
+            {
+                id: 1,
+                name: 'Question',
+                image: 'product1.jpg'
+            },
+            {
+                id: 2,
+                name: 'Answer',
+                image: 'product2.jpg'
+            },
+            {
+                id: 3,
+                name: 'Heading',
+                image: 'product3.jpg'
+            },
+        ]
+                    }) %>
   </div>
 
   <div class="field">

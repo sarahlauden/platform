@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import CKEditor from '@ckeditor/ckeditor5-react';
+
+// The official CKEditor 5 instance inspector. It helps understand the editor view and model.
+import CKEditorInspector from '@ckeditor/ckeditor5-inspector';
 
 // NOTE: Use the editor from source (not a build)!
 import BalloonEditor from '@ckeditor/ckeditor5-editor-balloon/src/ballooneditor';
@@ -26,7 +30,16 @@ import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
 import PasteFromOffice from '@ckeditor/ckeditor5-paste-from-office/src/pastefromoffice';
 import Table from '@ckeditor/ckeditor5-table/src/table';
 import TableToolbar from '@ckeditor/ckeditor5-table/src/tabletoolbar';
+import Underline from '@ckeditor/ckeditor5-basic-styles/src/underline';
 import UploadAdapter from '@ckeditor/ckeditor5-adapter-ckfinder/src/uploadadapter';
+
+// CKEditor plugin implementing a content part widget to be used in the editor content.
+import ContentPartPreviewEditing from '../ckeditor/contentpartpreviewediting';
+
+// React components to render the list of content parts and the content part preview.
+import ContentPartList from './ContentPartList';
+import ContentPartPreview from './ContentPartPreview';
+
 
 // Plugins to include in the build.
 BalloonEditor.builtinPlugins = [
@@ -52,7 +65,9 @@ BalloonEditor.builtinPlugins = [
     PasteFromOffice,
     Table,
     TableToolbar,
-    UploadAdapter
+    UploadAdapter,
+
+    ContentPartPreviewEditing
 ];
 
 // Editor configuration.
@@ -90,9 +105,6 @@ BalloonEditor.defaultConfig = {
             'imageUpload',
             'blockQuote',
             'insertTable',
-/*
-            'mediaEmbed',
-            */
             'undo',
             'redo'
         ]
@@ -117,26 +129,89 @@ BalloonEditor.defaultConfig = {
 };
 
 class ContentEditor extends Component {
+    constructor( props ) {
+        super( props );
+
+        // A place to store the reference to the editor instance created by the <CKEditor> component.
+        // The editor instance is created asynchronously and is only available when the editor is ready.
+        this.editor = null;
+
+        this.state = {
+            // The initial editor data. It is bound to the editor instance and will change as
+            // the user types and modifies the content of the editor.
+            editorData: props.data,
+        };
+
+        // The configuration of the <CKEditor> instance.
+        this.editorConfig = {
+            // The configuration of the ContentParts plugin. It specifies a function that will allow
+            // the editor to render a React <ContentPartPreview> component inside a contentPart widget.
+            contentParts: {
+                contentPartRenderer: ( id, domElement ) => {
+                    const contentPart = this.props.contentParts.find( contentPart => contentPart.id === id );
+
+                    ReactDOM.render(
+                        <ContentPartPreview id={id} {...contentPart} />,
+                        domElement
+                    );
+                }
+            }
+        };
+
+        this.handleEditorDataChange = this.handleEditorDataChange.bind( this );
+        this.handleEditorInit = this.handleEditorInit.bind( this );
+    }
+
+    // A handler executed when the user types or modifies the editor content.
+    // It updates the state of the application.
+    handleEditorDataChange( evt, editor ) {
+        this.setState( {
+            editorData: editor.getData()
+        } );
+    }
+
+    // A handler executed when the editor has been initialized and is ready.
+    // It synchronizes the initial data state and saves the reference to the editor instance.
+    handleEditorInit( editor ) {
+        this.editor = editor;
+
+        this.setState( {
+            editorData: editor.getData()
+        } );
+
+        // CKEditor 5 inspector allows you to take a peek into the editor's model and view
+        // data layers. Use it to debug the application and learn more about the editor.
+        CKEditorInspector.attach( editor );
+    }
+
     render() {
+            // The application renders two columns:
+            // * in the left one, the <CKEditor> and the textarea displaying live
+            //   editor data are rendered.
+            // * in the right column, a <ContentPartList> is rendered with available <ContentPartPreviews>
+            //   to choose from.
         return (
-            <div className="ContentEditor">
-                <CKEditor
-                    editor={ BalloonEditor }
-                    data={ this.props.data }
-                    onInit={ editor => {
-                        // You can store the "editor" and use when it is needed.
-                        console.log( 'Editor is ready to use!', editor );
-                    } }
-                    onChange={ ( event, editor ) => {
-                        const data = editor.getData();
-                        console.log( { event, editor, data } );
-                    } }
-                    onBlur={ ( event, editor ) => {
-                        console.log( 'Blur.', editor );
-                    } }
-                    onFocus={ ( event, editor ) => {
-                        console.log( 'Focus.', editor );
-                    } }
+            <div className="demo" key="content-editor">
+                <div className="demo__offer-editor" key="offer-editor">
+                    <h3>Content editor</h3>
+                    <CKEditor
+                        editor={BalloonEditor}
+                        data={this.state.editorData}
+                        config={this.editorConfig}
+                        onChange={this.handleEditorDataChange}
+                        onInit={this.handleEditorInit}
+                    />
+
+                    <h3>HTML View</h3>
+                    <textarea value={this.state.editorData} readOnly={true} name="content[body]"></textarea>
+                </div>
+                <ContentPartList
+                    key="content-part-list"
+                    contentParts={this.props.contentParts}
+                    onClick={( id ) => {
+                        this.editor.execute( 'insertContentPart', id );
+                        this.editor.editing.view.focus();
+                    }}
                 />
             </div>
         );
@@ -144,4 +219,3 @@ class ContentEditor extends Component {
 }
 
 export default ContentEditor;
-
