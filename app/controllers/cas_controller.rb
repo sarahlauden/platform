@@ -4,7 +4,6 @@ require 'rubycas-server-core/tickets/validations'
 require 'rubycas-server-core/tickets/generations'
 
 class CasController < ApplicationController
-  $LOG = Logger.new(STDOUT)
   include RubyCAS::Server::Core::Util
   include RubyCAS::Server::Core::Tickets
   include RubyCAS::Server::Core::Tickets::Validations
@@ -31,9 +30,9 @@ class CasController < ApplicationController
       @message = {:type => 'notice',
         :message => "You are currently logged in as '#{tgt.username}'. If this is not you, please log in below."}
     elsif tgt_error
-      $LOG.debug("Ticket granting cookie could not be validated: #{tgt_error}")
+      Rails.logger.debug("Ticket granting cookie could not be validated: #{tgt_error}")
     elsif !tgt
-      $LOG.debug("No ticket granting ticket detected.")
+      Rails.logger.debug("No ticket granting ticket detected.")
     end
 
     if params['redirection_loop_intercepted']
@@ -44,28 +43,28 @@ class CasController < ApplicationController
     begin
       if @service
         if @renew
-          $LOG.info("Authentication renew explicitly requested. Proceeding with CAS login for service #{@service.inspect}.")
+          Rails.logger.info("Authentication renew explicitly requested. Proceeding with CAS login for service #{@service.inspect}.")
         elsif tgt && !tgt_error
-          $LOG.debug("Valid ticket granting ticket detected.")
+          Rails.logger.debug("Valid ticket granting ticket detected.")
           st = ST.generate_service_ticket(@service, tgt.username, tgt)
           service_with_ticket = service_uri_with_ticket(@service, st)
-          $LOG.info("User '#{tgt.username}' authenticated based on ticket granting cookie. Redirecting to service '#{@service}'.")
+          Rails.logger.info("User '#{tgt.username}' authenticated based on ticket granting cookie. Redirecting to service '#{@service}'.")
           redirect_to service_with_ticket, 303 # response code 303 means "See Other" (see Appendix B in CAS Protocol spec)
         elsif @gateway
-          $LOG.info("Redirecting unauthenticated gateway request to service '#{@service}'.")
+          Rails.logger.info("Redirecting unauthenticated gateway request to service '#{@service}'.")
           redirect_to @service, 303
         else
-          $LOG.info("Proceeding with CAS login for service #{@service.inspect}.")
+          Rails.logger.info("Proceeding with CAS login for service #{@service.inspect}.")
         end
       elsif @gateway
-          $LOG.error("This is a gateway request but no service parameter was given!")
+          Rails.logger.error("This is a gateway request but no service parameter was given!")
           @message = {:type => 'mistake',
             :message => "The server cannot fulfill this gateway request because no service parameter was given."}
       else
-        $LOG.info("Proceeding with CAS login without a target service.")
+        Rails.logger.info("Proceeding with CAS login without a target service.")
       end
     rescue URI::InvalidURIError
-      $LOG.error("The service '#{@service}' is not a valid URI!")
+      Rails.logger.error("The service '#{@service}' is not a valid URI!")
       @message = {:type => 'mistake',
         :message => "The target service your browser supplied appears to be invalid. Please contact your system administrator for help."}
     end
@@ -73,11 +72,11 @@ class CasController < ApplicationController
     c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']
     lt = LT.generate_login_ticket(c)
 
-    $LOG.debug("Rendering login form with lt: #{lt}, service: #{@service}, renew: #{@renew}, gateway: #{@gateway}")
+    Rails.logger.debug("Rendering login form with lt: #{lt}, service: #{@service}, renew: #{@renew}, gateway: #{@gateway}")
 
     @lt = lt.ticket
 
-    #$LOG.debug(env)
+    #Rails.logger.debug(env)
 
     # If the 'onlyLoginForm' parameter is specified, we will only return the
     # login form part of the page. This is useful for when you want to
@@ -114,7 +113,7 @@ class CasController < ApplicationController
     @username.strip! if @username
 
     if @username && settings.config[:downcase_username]
-      $LOG.debug("Converting username #{@username.inspect} to lowercase because 'downcase_username' option is enabled.")
+      Rails.logger.debug("Converting username #{@username.inspect} to lowercase because 'downcase_username' option is enabled.")
       @username.downcase!
     end
 
@@ -128,7 +127,7 @@ class CasController < ApplicationController
     # generate another login ticket to allow for re-submitting the form after a post
     @lt = LT.generate_login_ticket.ticket
 
-    $LOG.debug("Logging in with username: #{@username}, lt: #{@lt}, service: #{@service}, auth: #{settings.auth.inspect}")
+    Rails.logger.debug("Logging in with username: #{@username}, lt: #{@lt}, service: #{@service}, auth: #{settings.auth.inspect}")
 
     credentials_are_valid = false
     extra_attributes = {}
@@ -161,17 +160,17 @@ class CasController < ApplicationController
       end
 
       if credentials_are_valid
-        $LOG.info("Credentials for username '#{@username}' successfully validated using #{successful_authenticator.class.name}.")
-        $LOG.debug("Authenticator provided additional user attributes: #{extra_attributes.inspect}") unless extra_attributes.blank?
+        Rails.logger.info("Credentials for username '#{@username}' successfully validated using #{successful_authenticator.class.name}.")
+        Rails.logger.debug("Authenticator provided additional user attributes: #{extra_attributes.inspect}") unless extra_attributes.blank?
 
         # 3.6 (ticket-granting cookie)
         tgt = generate_ticket_granting_ticket(@username, extra_attributes)
         response.set_cookie('tgt', tgt.to_s)
 
-        $LOG.debug("Ticket granting cookie '#{tgt.inspect}' granted to #{@username.inspect}")
+        Rails.logger.debug("Ticket granting cookie '#{tgt.inspect}' granted to #{@username.inspect}")
 
         if @service.blank?
-          $LOG.info("Successfully authenticated user '#{@username}' at '#{tgt.client_hostname}'. No service param was given, so we will not redirect.")
+          Rails.logger.info("Successfully authenticated user '#{@username}' at '#{tgt.client_hostname}'. No service param was given, so we will not redirect.")
           @message = {:type => 'confirmation', :message => "You have successfully logged in."}
         else
           @st = ST.generate_service_ticket(@service, @username, tgt)
@@ -179,10 +178,10 @@ class CasController < ApplicationController
           begin
             service_with_ticket = service_uri_with_ticket(@service, @st)
 
-            $LOG.info("Redirecting authenticated user '#{@username}' at '#{@st.client_hostname}' to service '#{@service}'")
+            Rails.logger.info("Redirecting authenticated user '#{@username}' at '#{@st.client_hostname}' to service '#{@service}'")
             redirect_to service_with_ticket, 303 # response code 303 means "See Other" (see Appendix B in CAS Protocol spec)
           rescue URI::InvalidURIError
-            $LOG.error("The service '#{@service}' is not a valid URI!")
+            Rails.logger.error("The service '#{@service}' is not a valid URI!")
             @message = {
               :type => 'mistake',
               :message => "The target service your browser supplied appears to be invalid. Please contact your system administrator for help."
@@ -190,12 +189,12 @@ class CasController < ApplicationController
           end
         end
       else
-        $LOG.warn("Invalid credentials given for user '#{@username}'")
+        Rails.logger.warn("Invalid credentials given for user '#{@username}'")
         @message = {:type => 'mistake', :message => "Incorrect username or password."}
         render :json => @message, status: :unauthorized
       end
     rescue Core::Authenticator::AuthenticatorError => e
-      $LOG.error(e)
+      Rails.logger.error(e)
       # generate another login ticket to allow for re-submitting the form
       @lt = LT.generate_login_ticket.ticket
       @message = {:type => 'mistake', :message => e.to_s}
@@ -224,12 +223,12 @@ class CasController < ApplicationController
 
     if tgt
       LT.transaction do
-        $LOG.debug("Deleting Service/Proxy Tickets for '#{tgt}' for user '#{tgt.username}'")
+        Rails.logger.debug("Deleting Service/Proxy Tickets for '#{tgt}' for user '#{tgt.username}'")
         tgt.granted_service_tickets.each do |st|
           send_logout_notification_for_service_ticket(st) if config[:enable_single_sign_out]
           # TODO: Maybe we should do some special handling if send_logout_notification_for_service_ticket fails?
           #       (the above method returns false if the POST results in a non-200 HTTP response).
-          $LOG.debug "Deleting #{st.class.name.demodulize} #{st.ticket.inspect} for service #{st.service}."
+          Rails.logger.debug "Deleting #{st.class.name.demodulize} #{st.ticket.inspect} for service #{st.service}."
           st.destroy
         end
 
@@ -238,17 +237,17 @@ class CasController < ApplicationController
         #   :conditions => [CASServer::Model::ServiceTicket.quoted_table_name+".username = ?", tgt.username],
         #   :include => :service_ticket)
         # pgts.each do |pgt|
-        #   $LOG.debug("Deleting Proxy-Granting Ticket '#{pgt}' for user '#{pgt.service_ticket.username}'")
+        #   Rails.logger.debug("Deleting Proxy-Granting Ticket '#{pgt}' for user '#{pgt.service_ticket.username}'")
         #   pgt.destroy
         # end
 
-        $LOG.debug("Deleting #{tgt.class.name.demodulize} '#{tgt}' for user '#{tgt.username}'")
+        Rails.logger.debug("Deleting #{tgt.class.name.demodulize} '#{tgt}' for user '#{tgt.username}'")
         tgt.destroy
       end
 
-      $LOG.info("User '#{tgt.username}' logged out.")
+      Rails.logger.info("User '#{tgt.username}' logged out.")
     else
-      $LOG.warn("User tried to log out without a valid ticket-granting ticket.")
+      Rails.logger.warn("User tried to log out without a valid ticket-granting ticket.")
     end
 
     @message = {:type => 'confirmation', :message => "You have successfully logged out."}
@@ -279,7 +278,7 @@ class CasController < ApplicationController
   end
 
   def loginTicket
-    $LOG.error("Tried to use login ticket dispenser with get method!")
+    Rails.logger.error("Tried to use login ticket dispenser with get method!")
 
     render :json => {:response => "To generate a login ticket, you must make a POST request."}, status: :unprocessable_entity
 
@@ -293,7 +292,7 @@ class CasController < ApplicationController
     c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']
     lt = LT.generate_login_ticket(c)
 
-    $LOG.debug("Dispensing login ticket #{lt} to host #{(request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']).inspect}")
+    Rails.logger.debug("Dispensing login ticket #{lt} to host #{(request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']).inspect}")
 
     @lt = lt.ticket
 
