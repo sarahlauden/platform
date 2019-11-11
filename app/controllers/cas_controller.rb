@@ -9,6 +9,7 @@ class CasController < ApplicationController
   include RubyCAS::Server::Core::Tickets::Validations
   include RubyCAS::Server::Core::Tickets::Generations
 
+  $LOG = logger # Necessary for logging messages from RubyCAS Server Core
   def login
     # make sure there's no caching
     headers['Pragma'] = 'no-cache'
