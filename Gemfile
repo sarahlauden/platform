@@ -44,6 +44,9 @@ group :development do
   gem 'rack-livereload'
   gem 'guard-webpacker'
   gem 'webpacker-react', "~> 1.0.0.beta.1"
+  gem 'guard-bundler', require: false
+  gem 'guard-yarn', require: false
+  gem 'guard-migrate', require: false
 end
 
 group :test do

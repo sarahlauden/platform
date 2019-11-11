@@ -22,4 +22,4 @@ RUN yarn install --check-files
 
 COPY . /usr/src/app/
 
-CMD ["bundle", "exec", "guard", "-i"]
+CMD ["/bin/sh"]
