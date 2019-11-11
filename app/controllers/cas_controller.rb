@@ -85,7 +85,7 @@ class CasController < ApplicationController
     # action for the form, otherwise the server will try to guess this for you.
     if params.has_key? 'onlyLoginForm'
       if request.env['HTTP_HOST']
-        guessed_login_uri = "http#{request.env['HTTPS'] && request.env['HTTPS'] == 'on' ? 's' : ''}://#{request.env['REQUEST_URI']}#{self / '/login'}"
+        guessed_login_uri = "#{request.env['HTTPS']}://#{request.env['REQUEST_URI']}#{self / '/login'}"
       else
         guessed_login_uri = nil
       end
