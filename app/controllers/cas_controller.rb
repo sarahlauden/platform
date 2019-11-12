@@ -9,7 +9,6 @@ class CasController < ApplicationController
   include RubyCAS::Server::Core::Tickets::Validations
   include RubyCAS::Server::Core::Tickets::Generations
 
-  $LOG = logger # Necessary for logging messages from RubyCAS Server Core
   def login
     # make sure there's no caching
     headers['Pragma'] = 'no-cache'
@@ -120,12 +119,14 @@ class CasController < ApplicationController
     if error = validate_login_ticket(@lt)
       @message = {:type => 'mistake', :message => error}
       # generate another login ticket to allow for re-submitting the form
-      @lt = LT.generate_login_ticket.ticket
+      c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']
+      @lt = LT.generate_login_ticket(c).ticket
       return render :login, status: :internal_server_error
     end
 
     # generate another login ticket to allow for re-submitting the form after a post
-    @lt = LT.generate_login_ticket.ticket
+    c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']
+    @lt = LT.generate_login_ticket(c).ticket
 
     logger.debug("Logging in with username: #{@username}, lt: #{@lt}, service: #{@service}, auth: #{settings.auth.inspect}")
 
@@ -196,7 +197,8 @@ class CasController < ApplicationController
     rescue Core::Authenticator::AuthenticatorError => e
       logger.error(e)
       # generate another login ticket to allow for re-submitting the form
-      @lt = LT.generate_login_ticket.ticket
+      c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']
+      @lt = LT.generate_login_ticket(c).ticket
       @message = {:type => 'mistake', :message => e.to_s}
       render :json => @message, status: :unauthorized
     end
@@ -281,14 +283,11 @@ class CasController < ApplicationController
     logger.error("Tried to use login ticket dispenser with get method!")
 
     render :json => {:response => "To generate a login ticket, you must make a POST request."}, status: :unprocessable_entity
-
-    
   end
   
   # Renders a page with a login ticket (and only the login ticket)
   # in the response body.
   def loginTicketPost
-
     c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']
     lt = LT.generate_login_ticket(c)
 
@@ -312,6 +311,7 @@ class CasController < ApplicationController
     @username = st.username if @success
 
     if @error
+      render :json => {:response => @error}, status: 422
     end 
 
     render :validate, :layout => false
@@ -338,7 +338,9 @@ class CasController < ApplicationController
       @extra_attributes = st.granted_by_tgt.extra_attributes || {}
     end
 
-    status response_status_from_error(@error) if @error
+    if @error
+      render :json => {:response => @error}, status: 422
+    end 
 
     render :builder, content_type: 'text/xml'
   end
@@ -378,7 +380,9 @@ class CasController < ApplicationController
       @extra_attributes = t.granted_by_tgt.extra_attributes || {}
     end
 
-    status response_status_from_error(@error) if @error
+    if @error
+      render :json => {:response => @error}, status: 422
+    end 
 
     render :builder, :proxy_validate
   end
@@ -396,42 +400,11 @@ class CasController < ApplicationController
       @pt = generate_proxy_ticket(@target_service, pgt)
     end
 
-    status response_status_from_error(@error) if @error
+    if @error
+      render :json => {:response => @error}, status: 422
+    end 
 
     render :builder, :proxy
   end
 
-  # Helpers
-  def response_status_from_error(error)
-    case error.code.to_s
-    when /^INVALID_/, 'BAD_PGT'
-      422
-    when 'INTERNAL_ERROR'
-      500
-    else
-      500
-    end
-  end
-
-  def serialize_extra_attribute(builder, key, value)
-    if value.kind_of?(String)
-      builder.tag! key, value
-    elsif value.kind_of?(Numeric)
-      builder.tag! key, value.to_s
-    else
-      builder.tag! key do
-        builder.cdata! value.to_yaml
-      end
-    end
-  end
-
-  helpers do
-    def authenticated?
-      @authenticated
-    end
-
-    def authenticated_username
-      @authenticated_username
-    end
-  end
 end
