@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(version: 2019_10_30_035633) do
 
   create_table "login_tickets", force: :cascade do |t|
     t.string "ticket", null: false
-    t.datetime "created_on", null: false
+    t.datetime "created_at", null: false
     t.datetime "consumed"
     t.string "client_hostname", null: false
   end
@@ -148,7 +148,7 @@ ActiveRecord::Schema.define(version: 2019_10_30_035633) do
 
   create_table "proxy_granting_tickets", force: :cascade do |t|
     t.string "ticket", null: false
-    t.datetime "created_on", null: false
+    t.datetime "created_at", null: false
     t.string "client_hostname", null: false
     t.string "iou", null: false
     t.integer "service_ticket_id", null: false
@@ -164,7 +164,7 @@ ActiveRecord::Schema.define(version: 2019_10_30_035633) do
   create_table "service_tickets", force: :cascade do |t|
     t.string "ticket", null: false
     t.string "service", null: false
-    t.datetime "created_on", null: false
+    t.datetime "created_at", null: false
     t.datetime "consumed"
     t.string "client_hostname", null: false
     t.string "username", null: false
@@ -174,7 +174,7 @@ ActiveRecord::Schema.define(version: 2019_10_30_035633) do
 
   create_table "ticket_granting_tickets", force: :cascade do |t|
     t.string "ticket", null: false
-    t.datetime "created_on", null: false
+    t.datetime "created_at", null: false
     t.string "client_hostname", null: false
     t.string "username", null: false
   end

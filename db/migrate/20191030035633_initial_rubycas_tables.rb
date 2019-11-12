@@ -3,6 +3,7 @@ class InitialRubycasTables < ActiveRecord::Migration[6.0]
     create_table :login_tickets, :force => true do |t|
       t.column :ticket,     :string,   :null => false
       t.column :created_on, :timestamp, :null => false
+      t.column :created_at, :timestamp, :null => false
       t.column :consumed,   :datetime, :null => true
       t.column :client_hostname, :string, :null => false
     end
@@ -11,6 +12,7 @@ class InitialRubycasTables < ActiveRecord::Migration[6.0]
       t.column :ticket,     :string,    :null => false
       t.column :service,    :string,    :null => false
       t.column :created_on, :timestamp, :null => false
+      t.column :created_at, :timestamp, :null => false
       t.column :consumed,   :datetime, :null => true
       t.column :client_hostname, :string, :null => false
       t.column :username,   :string,  :null => false
@@ -21,6 +23,7 @@ class InitialRubycasTables < ActiveRecord::Migration[6.0]
     create_table :ticket_granting_tickets, :force => true do |t|
       t.column :ticket,     :string,    :null => false
       t.column :created_on, :timestamp, :null => false
+      t.column :created_at, :timestamp, :null => false
       t.column :client_hostname, :string, :null => false
       t.column :username,   :string,    :null => false
     end
@@ -28,6 +31,7 @@ class InitialRubycasTables < ActiveRecord::Migration[6.0]
     create_table :proxy_granting_tickets, :force => true do |t|
       t.column :ticket,     :string,    :null => false
       t.column :created_on, :timestamp, :null => false
+      t.column :created_at, :timestamp, :null => false
       t.column :client_hostname, :string, :null => false
       t.column :iou,        :string,    :null => false
       t.column :service_ticket_id, :integer, :null => false
