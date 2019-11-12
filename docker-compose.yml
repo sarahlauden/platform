@@ -10,6 +10,8 @@ services:
       - "3020:3020"
       # webpack-dev-server (config/webpacker.yml)
       - "3035:3035"
+      # rack-livereload (config/environments/development.rb)
+      - "35729:35729"
     volumes:
       - .:/usr/src/app
       - node-modules:/usr/src/app/node_modules
@@ -19,6 +21,7 @@ services:
       - .env
     networks:
       - bravendev
+    command: bundle exec guard -dip
 
   platformdb:
     image: postgres
