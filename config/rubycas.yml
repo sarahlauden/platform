@@ -11,6 +11,9 @@ default: &default
 
 development:
   <<: *default
+  log:
+    output: 
+    level: DEBUG
   public_site_domain: joinweb
   cookie_domain: .localhost # this should be the *top* domain - so even for staging, it should be .join.bebraven.org stilldefault_service: http://canvasweb/login/cas
   theme: simple
