@@ -103,29 +103,23 @@ class CasController < ApplicationController
 
   def loginpost
     @service = Utils.clean_service_url(params['service'])
-
     @username = params['username'].downcase # this ensures we always use lowercase for ease of case comparison throughout the system
     @password = params['password']
     @lt = params['lt']
 
+    c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']
+
     # Remove leading and trailing widespace from username.
     @username.strip! if @username
 
-    if @username && settings.config[:downcase_username]
-      logger.debug("Converting username #{@username.inspect} to lowercase because 'downcase_username' option is enabled.")
-      @username.downcase!
-    end
-
-    if error = validate_login_ticket(@lt)
+    if !result = validate_login_ticket(@lt)
       @message = {:type => 'mistake', :message => error}
       # generate another login ticket to allow for re-submitting the form
-      c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']
       @lt = LT.generate_login_ticket(c).ticket
-      return render :login, status: :internal_server_error
+      return render :login, status: :unauthorized
     end
 
     # generate another login ticket to allow for re-submitting the form after a post
-    c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']
     @lt = LT.generate_login_ticket(c).ticket
 
     logger.debug("Logging in with username: #{@username}, lt: #{@lt}, service: #{@service}, auth: #{settings.auth.inspect}")
