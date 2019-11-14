@@ -27,3 +27,44 @@ development:
     host: <%= ENV['DATABASE_HOST'] %>
     username: <%= ENV['DATABASE_USERNAME'] %>
     password: <%= ENV['DATABASE_PASSWORD'] %>
+  authenticator:
+    class: BeyondZ::CustomAuthenticator
+    source: beyondz.rb
+    # NOTE: in the local development environment, expose the Join server to this rubycas app by adding `127.0.0.1   joinweb` to your /etc/hosts file
+    server: joinweb
+    # We can override ssl, port, and self signed options for dev
+    # The default is to use SSL.
+    ssl: false
+    port: 3001
+    allow_self_signed: true
+
+
+test:
+  <<: *default
+  log:
+    output: 
+    level: DEBUG
+  public_site_domain: joinweb
+  cookie_domain: .localhost # this should be the *top* domain - so even for staging, it should be .join.bebraven.org stilldefault_service: http://canvasweb/login/cas
+  theme: simple
+  organization: Braven Docker SSO
+  infoline: Powered by <a href="http://rubycas.github.com">RubyCAS-Server</a>
+  database:
+    database: platform_development
+    reconnect: true
+    adapter: postgresql
+    encoding: unicode
+    host: <%= ENV['DATABASE_HOST'] %>
+    username: <%= ENV['DATABASE_USERNAME'] %>
+    password: <%= ENV['DATABASE_PASSWORD'] %>
+  authenticator:
+    class: BeyondZ::CustomAuthenticator
+    source: beyondz.rb
+    # NOTE: in the local development environment, expose the Join server to this rubycas app by adding `127.0.0.1   joinweb` to your /etc/hosts file
+    server: joinweb
+    # We can override ssl, port, and self signed options for dev
+    # The default is to use SSL.
+    ssl: false
+    port: 3001
+    allow_self_signed: true
+
