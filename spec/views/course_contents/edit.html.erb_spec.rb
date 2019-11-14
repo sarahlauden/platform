@@ -12,11 +12,6 @@ RSpec.describe "course_contents/edit", type: :view do
   it "renders the edit course_content form" do
     render
 
-    assert_select "form[action=?][method=?]", course_content_path(@course_content), "post" do
-
-      assert_select "input[name=?]", "course_content[title]"
-
-      assert_select "input[name=?]", "course_content[content_type]"
-    end
+    assert_select "form[action=?][method=?]", course_content_path(@course_content), "post"
   end
 end

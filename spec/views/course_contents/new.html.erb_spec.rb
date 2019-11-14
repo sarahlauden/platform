@@ -12,11 +12,6 @@ RSpec.describe "course_contents/new", type: :view do
   it "renders new course_content form" do
     render
 
-    assert_select "form[action=?][method=?]", course_contents_path, "post" do
-
-      assert_select "input[name=?]", "course_content[title]"
-
-      assert_select "input[name=?]", "course_content[content_type]"
-    end
+    assert_select "form[action=?][method=?]", course_contents_path, "post"
   end
 end
