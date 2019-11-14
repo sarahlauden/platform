@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  resources :contents
+  resources :course_contents
   devise_for :users
   
   get 'home/welcome'

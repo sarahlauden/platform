@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe "contents/show", type: :view do
+RSpec.describe "course_contents/show", type: :view do
   before(:each) do
-    @content = assign(:content, Content.create!(
+    @course_content = assign(:course_content, CourseContent.create!(
       :title => "Title",
       :body => "MyText",
       :content_type => "MyText"
