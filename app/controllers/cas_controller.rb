@@ -122,7 +122,8 @@ class CasController < ApplicationController
     # generate another login ticket to allow for re-submitting the form after a post
     @lt = LT.generate_login_ticket(c).ticket
 
-    logger.debug("Logging in with username: #{@username}, lt: #{@lt}, service: #{@service}, auth: #{settings.auth.inspect}")
+    settings = RubyCAS::Server::Core::Settings._settings
+    logger.debug("Logging in with username: #{@username}, lt: #{@lt}, service: #{@service}, auth: #{settings.inspect}")
 
     credentials_are_valid = false
     extra_attributes = {}
@@ -188,7 +189,7 @@ class CasController < ApplicationController
         @message = {:type => 'mistake', :message => "Incorrect username or password."}
         render :json => @message, status: :unauthorized
       end
-    rescue Core::Authenticator::AuthenticatorError => e
+    rescue RubyCAS::Server::Core::AuthenticatorError => e
       logger.error(e)
       # generate another login ticket to allow for re-submitting the form
       c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']
