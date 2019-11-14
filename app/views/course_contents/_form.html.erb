@@ -14,13 +14,7 @@
   <% end %>
 
   <div class="field">
-    <%= form.label :title %>
-    <%= form.text_field :title %>
-  </div>
-
-  <div class="field">
-    <%= form.label :body %>
-    <%= react_component('ContentEditor', { data: course_content.body,
+    <%= react_component('ContentEditor', { course_content: course_content,
         contentParts: [
             {
                 id: 1,
@@ -39,26 +33,6 @@
             },
         ]
                     }) %>
-  </div>
-
-  <div class="field">
-    <%= form.label :content_type %>
-    <%= form.text_field :content_type %>
-  </div>
-
-  <div class="field">
-    <%= form.label :course_id %>
-    <%= form.number_field :course_id %>
-  </div>
-
-  <div class="field">
-    <%= form.label :secondary_id %>
-    <%= form.text_field :secondary_id %>
-  </div>
-
-  <div class="field">
-    <%= form.label :course_name %>
-    <%= form.text_field :course_name %>
   </div>
 
   <div class="actions">

@@ -42,6 +42,7 @@
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
     "react-hot-loader": "4",
+    "react-tabs": "^3.0.0",
     "react_ujs": "^2.6.0",
     "style-loader": "1",
     "turbolinks": "^5.2.0",
