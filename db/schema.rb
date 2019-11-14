@@ -51,7 +51,8 @@ ActiveRecord::Schema.define(version: 2019_11_14_183555) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "course_id"
-    t.string "item_id"
+    t.string "secondary_id"
+    t.string "course_name"
   end
 
   create_table "emails", force: :cascade do |t|
