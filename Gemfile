@@ -67,6 +67,8 @@ gem 'paranoia'
 gem 'will_paginate'
 gem 'bulk_insert'
 
+gem 'rest-client'
+
 gem 'devise'
 gem 'devise_cas_authenticatable'
 
