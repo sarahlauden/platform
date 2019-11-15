@@ -24,7 +24,6 @@ module BeyondZ
         'password' => credentials[:password]
       )
       response = http.request(request)
-
       return (response.body == "true")
     end
   end

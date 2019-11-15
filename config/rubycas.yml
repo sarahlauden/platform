@@ -1,5 +1,6 @@
 
 default: &default
+  infoline: Powered by <a href="http://rubycas.github.com">RubyCAS-Server-Core</a>
   log:
     output: log/casserver.log
     level: INFO
@@ -15,10 +16,10 @@ development:
     output: 
     level: DEBUG
   public_site_domain: joinweb
-  cookie_domain: .localhost # this should be the *top* domain - so even for staging, it should be .join.bebraven.org stilldefault_service: http://canvasweb/login/cas
+  # this should be the *top* domain - so even for staging, it should be .join.bebraven.org stilldefault_service: http://canvasweb/login/cas
+  cookie_domain: .localhost 
   theme: simple
   organization: Braven Docker SSO
-  infoline: Powered by <a href="http://rubycas.github.com">RubyCAS-Server</a>
   database:
     database: platform_development
     reconnect: true
@@ -45,12 +46,13 @@ test:
     output: 
     level: DEBUG
   public_site_domain: joinweb
-  cookie_domain: .localhost # this should be the *top* domain - so even for staging, it should be .join.bebraven.org stilldefault_service: http://canvasweb/login/cas
+  # this should be the *top* domain - so even for staging, it should be .join.bebraven.org stilldefault_service: http://canvasweb/login/cas
+  cookie_domain: .localhost 
+  organization: "RSPEC-TEST"
+  infoline: "This is an rspec test."  
   theme: simple
-  organization: Braven Docker SSO
-  infoline: Powered by <a href="http://rubycas.github.com">RubyCAS-Server</a>
   database:
-    database: platform_development
+    database: platform_test
     reconnect: true
     adapter: postgresql
     encoding: unicode
@@ -67,4 +69,8 @@ test:
     ssl: false
     port: 3001
     allow_self_signed: true
-
+  uri_path: /test
+  disable_auto_migrations: true
+  quiet: true
+  default_locale: en
+  enable_single_sign_out: true
