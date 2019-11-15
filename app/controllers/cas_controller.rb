@@ -15,6 +15,8 @@ class CasController < ApplicationController
     headers['Cache-Control'] = 'no-store'
     headers['Expires'] = (Time.now - 1.year).rfc2822
 
+    c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']
+
     # optional params
     @service = Utils.clean_service_url(params['service'])
     @renew = params['renew']
@@ -24,7 +26,7 @@ class CasController < ApplicationController
       tgt, tgt_error = validate_ticket_granting_ticket(tgc)
     end
 
-    if tgt and !tgt_error
+    if tgt && !tgt_error
       @authenticated = true
       @authenticated_username = tgt.username
       @message = {:type => 'notice',
@@ -46,13 +48,15 @@ class CasController < ApplicationController
           logger.info("Authentication renew explicitly requested. Proceeding with CAS login for service #{@service.inspect}.")
         elsif tgt && !tgt_error
           logger.debug("Valid ticket granting ticket detected.")
-          st = ST.generate_service_ticket(@service, tgt.username, tgt)
+          st = ST.generate_service_ticket(@service, tgt.username, tgt, c)
           service_with_ticket = service_uri_with_ticket(@service, st)
           logger.info("User '#{tgt.username}' authenticated based on ticket granting cookie. Redirecting to service '#{@service}'.")
-          redirect_to service_with_ticket, 303 # response code 303 means "See Other" (see Appendix B in CAS Protocol spec)
+          redirect_to service_with_ticket, status: 303 # response code 303 means "See Other" (see Appendix B in CAS Protocol spec)
+          return
         elsif @gateway
           logger.info("Redirecting unauthenticated gateway request to service '#{@service}'.")
-          redirect_to @service, 303
+          redirect_to @service, status: 303
+          return
         else
           logger.info("Proceeding with CAS login for service #{@service.inspect}.")
         end
@@ -169,13 +173,13 @@ class CasController < ApplicationController
           logger.info("Successfully authenticated user '#{@username}' at '#{tgt.client_hostname}'. No service param was given, so we will not redirect.")
           @message = {:type => 'confirmation', :message => "You have successfully logged in."}
         else
-          @st = ST.generate_service_ticket(@service, @username, tgt)
+          @st = ST.generate_service_ticket(@service, @username, tgt, c)
 
           begin
             service_with_ticket = service_uri_with_ticket(@service, @st)
-
             logger.info("Redirecting authenticated user '#{@username}' at '#{@st.client_hostname}' to service '#{@service}'")
-            redirect_to service_with_ticket, 303 # response code 303 means "See Other" (see Appendix B in CAS Protocol spec)
+            redirect_to service_with_ticket, status: 303 # response code 303 means "See Other" (see Appendix B in CAS Protocol spec)
+            return
           rescue URI::InvalidURIError
             logger.error("The service '#{@service}' is not a valid URI!")
             @message = {
@@ -192,7 +196,6 @@ class CasController < ApplicationController
     rescue RubyCAS::Server::Core::AuthenticatorError => e
       logger.error(e)
       # generate another login ticket to allow for re-submitting the form
-      c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']
       @lt = LT.generate_login_ticket(c).ticket
       @message = {:type => 'mistake', :message => e.to_s}
       render :json => @message, status: :unauthorized
