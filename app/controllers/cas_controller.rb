@@ -130,10 +130,10 @@ class CasController < ApplicationController
     successful_authenticator = nil
     begin
       auth_index = 0
-      settings.auth.each do |auth_class|
+      settings[:auth].each do |auth_class|
         auth = auth_class.new
 
-        auth_config = settings.config[:authenticator][auth_index]
+        auth_config = settings[:authenticator]
         # pass the authenticator index to the configuration hash in case the authenticator needs to know
         # it splace in the authenticator queue
         auth.configure(auth_config.merge('auth_index' => auth_index))
