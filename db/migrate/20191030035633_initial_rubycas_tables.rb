@@ -16,8 +16,8 @@ class InitialRubycasTables < ActiveRecord::Migration[6.0]
       t.column :consumed,   :datetime, :null => true
       t.column :client_hostname, :string, :null => false
       t.column :username,   :string,  :null => false
-      t.column :type,       :string,   :null => false
       t.column :proxy_granting_ticket_id, :integer, :null => true
+      t.column :ticket_granting_ticket_id, :integer, :null => true
     end
 
     create_table :ticket_granting_tickets, :force => true do |t|
@@ -26,6 +26,9 @@ class InitialRubycasTables < ActiveRecord::Migration[6.0]
       t.column :created_at, :timestamp, :null => false
       t.column :client_hostname, :string, :null => false
       t.column :username,   :string,    :null => false
+      t.column :remember_me,   :string,    :null => false
+      t.column :extra_attributes, :null => false
+
     end
 
     create_table :proxy_granting_tickets, :force => true do |t|
