@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import CKEditor from '@ckeditor/ckeditor5-react';
+import Rails from '@rails/ujs';
 
 // Non-ckeditor React imports
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
@@ -144,6 +145,7 @@ class ContentEditor extends Component {
             // The initial editor data. It is bound to the editor instance and will change as
             // the user types and modifies the content of the editor.
             editorData: props.course_content['body'] || "",
+            isPublished: false
         };
 
         // The configuration of the <CKEditor> instance.
@@ -170,7 +172,8 @@ class ContentEditor extends Component {
     // It updates the state of the application.
     handleEditorDataChange( evt, editor ) {
         this.setState( {
-            editorData: editor.getData()
+            editorData: editor.getData(),
+            isPublished: false
         } );
     }
 
@@ -178,7 +181,8 @@ class ContentEditor extends Component {
     // It updates the state of the application.
     handleHTMLEditorDataChange( evt ) {
         this.setState( {
-            editorData: evt.target.value
+            editorData: evt.target.value,
+            isPublished: false
         } );
     }
 
@@ -196,6 +200,31 @@ class ContentEditor extends Component {
         CKEditorInspector.attach( editor );
     }
 
+    handlePublish( evt ) {
+        fetch("/course_contents/1/publish.json", {
+                method: 'POST',
+                body: JSON.stringify(this.props.course_content), // data can be `string` or {object}!
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': Rails.csrfToken()
+                }
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState( {'isPublished': true} );
+                    // TODO: provide a way for the user to easily view the result, which will be in:
+                    // `${CANVAS_URL}/courses/${result['course_id']}/pages/${result['secondary_id']}`
+                },
+                // Note: it's important to handle errors here
+                // instead of a catch() block so that we don't swallow
+                // exceptions from actual bugs in components.
+                (error) => {
+                    console.log(error);
+                }
+            );
+    }
+
     render() {
             // The application renders two columns:
             // * in the left one, the <CKEditor> and the textarea displaying live
@@ -210,7 +239,9 @@ class ContentEditor extends Component {
                     <span id="autosave-indicator" className="saving">Saving...</span>
 
                     <ul>
-                        <li>Publish</li>
+                        <li onClick={(evt) => this.handlePublish(evt)} className={this.state['isPublished'] ? "success" : ""}>
+                          Publish{this.state['isPublished'] ? "ed" : ""} {this.state['isPublished']}
+                        </li>
                     </ul>
 
                 </header>
