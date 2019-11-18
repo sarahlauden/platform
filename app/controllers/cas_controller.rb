@@ -27,8 +27,6 @@ class CasController < ApplicationController
     end
 
     if tgt && !tgt_error
-      @authenticated = true
-      @authenticated_username = tgt.username
       @message = {:type => 'notice',
         :message => "You are currently logged in as '#{tgt.username}'. If this is not you, please log in below."}
     elsif tgt_error
@@ -51,12 +49,10 @@ class CasController < ApplicationController
           st = ST.generate_service_ticket(@service, tgt.username, tgt, c)
           service_with_ticket = service_uri_with_ticket(@service, st)
           logger.info("User '#{tgt.username}' authenticated based on ticket granting cookie. Redirecting to service '#{@service}'.")
-          redirect_to service_with_ticket, status: 303 # response code 303 means "See Other" (see Appendix B in CAS Protocol spec)
-          return
+          return redirect_to service_with_ticket, status: 303
         elsif @gateway
           logger.info("Redirecting unauthenticated gateway request to service '#{@service}'.")
-          redirect_to @service, status: 303
-          return
+          return redirect_to @service, status: 303
         else
           logger.info("Proceeding with CAS login for service #{@service.inspect}.")
         end
@@ -70,16 +66,15 @@ class CasController < ApplicationController
     rescue URI::InvalidURIError
       logger.error("The service '#{@service}' is not a valid URI!")
       @message = {:type => 'mistake',
-        :message => "The target service your browser supplied appears to be invalid. Please contact your system administrator for help."}
+        :message => "The target service your browser supplied appears to be invalid. Please contact your system administrator for help."
+        }
     end
 
-    c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']
     lt = LT.generate_login_ticket(c)
 
     logger.debug("Rendering login form with lt: #{lt}, service: #{@service}, renew: #{@renew}, gateway: #{@gateway}")
 
     @lt = lt.ticket
-
 
     # If the 'onlyLoginForm' parameter is specified, we will only return the
     # login form part of the page. This is useful for when you want to
@@ -107,14 +102,11 @@ class CasController < ApplicationController
 
   def loginpost
     @service = Utils.clean_service_url(params['service'])
-    @username = params['username'].downcase # this ensures we always use lowercase for ease of case comparison throughout the system
+    @username = params['username'].downcase.strip
     @password = params['password']
     @lt = params['lt']
 
     c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']
-
-    # Remove leading and trailing widespace from username.
-    @username.strip! if @username
 
     if !result = validate_login_ticket(@lt)
       @message = {:type => 'mistake', :message => error}
@@ -133,8 +125,7 @@ class CasController < ApplicationController
     extra_attributes = {}
     successful_authenticator = nil
     begin
-      auth_index = 0
-      settings[:auth].each do |auth_class|
+      settings[:auth].each do |auth_class, auth_index|
         auth = auth_class.new
 
         auth_config = settings[:authenticator]
@@ -149,14 +140,10 @@ class CasController < ApplicationController
           :request => request.env
         )
         if credentials_are_valid
-          @authenticated = true
-          @authenticated_username = @username
           extra_attributes.merge!(auth.extra_attributes) unless auth.extra_attributes.blank?
           successful_authenticator = auth
           break
         end
-
-        auth_index += 1
       end
 
       if credentials_are_valid
@@ -258,7 +245,6 @@ class CasController < ApplicationController
 
     @log_out_of_services = true
 
-    c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR'] 
     @lt = generate_login_ticket(c)
 
     if @gateway && @service
