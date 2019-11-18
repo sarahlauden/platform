@@ -96,9 +96,9 @@ class CasController < ApplicationController
       @form_action = params['submitToURI'] || guessed_login_uri
 
       if @form_action
-        render :login_form
+        return render :_login_form
       else
-        render :json => {:response => "Could not guess the CAS login URI. Please supply a submitToURI parameter with your request."}, status: :internal_server_error
+        return render :json => {:response => "Could not guess the CAS login URI. Please supply a submitToURI parameter with your request."}, status: :internal_server_error
       end
     else
       render :login
@@ -212,7 +212,8 @@ class CasController < ApplicationController
 
     # BZ modification: always use default service so logout/login goes back to our main
     # site (which can redirect) regardless of where they came from
-    @service = Utils.clean_service_url(params['service'] || 'http://canvasweb/login/cas') # params['service'] || params['destination'])
+    settings = RubyCAS::Server::Core::Settings._settings
+    @service = Utils.clean_service_url(params['service'] || settings[:default_service]) # params['service'] || params['destination'])
     @continue_url = params['url']
 
     @gateway = params['gateway'] == 'true' || params['gateway'] == '1'
@@ -260,21 +261,11 @@ class CasController < ApplicationController
     @lt = generate_login_ticket(c)
 
     if @gateway && @service
-      # I'm changing this to render the logout instead of redirecting
-      # because the redirection wouldn't give a chance for the logout
-      # iframe trick to log out of the main site. Since we also have
-      # a default service now in the configuration, it isn't as important
-      # for that to be preserved anyway - it will send them back to the
-      # default service which is good for us too as we can then handle
-      # the redirect based on the user account type automatically.
-
-      # redirect_to @service, 303
-      render :login
+      return render :login
     elsif @continue_url
-      render :logout
-    else
-      render :login
+      return render :logout
     end
+    render :login
   end
 
   def loginTicket
@@ -329,8 +320,7 @@ class CasController < ApplicationController
     if @success
       @username = st.username
       if @pgt_url
-        raise NotImplementedError
-        pgt = generate_proxy_granting_ticket(@pgt_url, st)
+        pgt = generate_proxy_granting_ticket(@pgt_url, st, c)
         @pgtiou = pgt.iou if pgt
       end
       @extra_attributes = st.granted_by_tgt.extra_attributes || {}
@@ -344,9 +334,11 @@ class CasController < ApplicationController
   end
   
   def proxyValidate
-    raise NotImplementedError
     # force xml content type
-    content_type 'text/xml', :charset => 'utf-8'
+    @headers = {
+      content_type: 'text/xml',
+      charset: 'utf-8'
+    }
 
     # required
     @service = Utils.clean_service_url(params['service'])
@@ -370,8 +362,7 @@ class CasController < ApplicationController
       end
 
       if @pgt_url
-        raise NotImplementedError
-        pgt = generate_proxy_granting_ticket(@pgt_url, t)
+        pgt = generate_proxy_granting_ticket(@pgt_url, t, c)
         @pgtiou = pgt.iou if pgt
       end
 
@@ -386,7 +377,6 @@ class CasController < ApplicationController
   end
 
   def proxy
-    raise NotImplementedError
     # required
     @ticket = params['pgt']
     @target_service = params['targetService']

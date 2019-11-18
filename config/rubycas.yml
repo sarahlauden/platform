@@ -8,7 +8,23 @@ default: &default
   maximum_unused_service_ticket_lifetime: 300
   maximum_session_lifetime: 172800
   maximum_remember_me_lifetime: 604800
-  
+  database: &default_db
+    database: platform
+    reconnect: true
+    adapter: postgresql
+    encoding: unicode
+    host: <%= ENV['DATABASE_HOST'] %>
+    username: <%= ENV['DATABASE_USERNAME'] %>
+    password: <%= ENV['DATABASE_PASSWORD'] %>
+  authenticator: &default_bz_auth
+    class: BeyondZ::CustomAuthenticator
+    source: beyondz.rb
+    server: join.bebraven.org
+    # We can override ssl, port, and self signed options for dev
+    # The default is to use SSL.
+    # ssl: false
+    # port: 3001
+    # allow_self_signed: true
 
 development:
   <<: *default
@@ -21,24 +37,11 @@ development:
   theme: simple
   organization: Braven Docker SSO
   database:
+    <<: *default_db
     database: platform_development
-    reconnect: true
-    adapter: postgresql
-    encoding: unicode
-    host: <%= ENV['DATABASE_HOST'] %>
-    username: <%= ENV['DATABASE_USERNAME'] %>
-    password: <%= ENV['DATABASE_PASSWORD'] %>
   authenticator:
-    class: BeyondZ::CustomAuthenticator
-    source: beyondz.rb
-    # NOTE: in the local development environment, expose the Join server to this rubycas app by adding `127.0.0.1   joinweb` to your /etc/hosts file
+    <<: *default_bz_auth
     server: joinweb
-    # We can override ssl, port, and self signed options for dev
-    # The default is to use SSL.
-    ssl: false
-    port: 3001
-    allow_self_signed: true
-
 
 test:
   <<: *default
@@ -52,23 +55,11 @@ test:
   infoline: "This is an rspec test."  
   theme: simple
   database:
+    <<: *default_db
     database: platform_test
-    reconnect: true
-    adapter: postgresql
-    encoding: unicode
-    host: <%= ENV['DATABASE_HOST'] %>
-    username: <%= ENV['DATABASE_USERNAME'] %>
-    password: <%= ENV['DATABASE_PASSWORD'] %>
   authenticator:
-    class: BeyondZ::CustomAuthenticator
-    source: beyondz.rb
-    # NOTE: in the local development environment, expose the Join server to this rubycas app by adding `127.0.0.1   joinweb` to your /etc/hosts file
+    <<: *default_bz_auth
     server: joinweb
-    # We can override ssl, port, and self signed options for dev
-    # The default is to use SSL.
-    ssl: false
-    port: 3001
-    allow_self_signed: true
   uri_path: /test
   disable_auto_migrations: true
   quiet: true
