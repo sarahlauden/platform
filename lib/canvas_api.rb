@@ -2,10 +2,9 @@ require 'rest-client'
 
 class CanvasAPI
 
-  DEFAULT_CANVAS_URL = 'https://portal.bebraven.org/api/v1'
-
   def initialize(canvas_url, auth_token)
-    @canvas_url = canvas_url || DEFAULT_CANVAS_URL
+    @canvas_url = canvas_url
+    @api_url = "#{@canvas_url}/api/v1"
     @global_headers = {
       'Authorization' => "Bearer #{auth_token}",
     }
@@ -24,15 +23,15 @@ class CanvasAPI
   private
 
   def get(path, params, headers={})
-    RestClient.get("#{@canvas_url}#{path}", params, @global_headers.merge(headers))
+    RestClient.get("#{@api_url}#{path}", params, @global_headers.merge(headers))
   end
 
   def post(path, body, headers={})
-    RestClient.post("#{@canvas_url}#{path}", body, @global_headers.merge(headers))
+    RestClient.post("#{@api_url}#{path}", body, @global_headers.merge(headers))
   end
 
   def put(path, body, headers={})
     puts @global_headers
-    RestClient.put("#{@canvas_url}#{path}", body, @global_headers.merge(headers))
+    RestClient.put("#{@api_url}#{path}", body, @global_headers.merge(headers))
   end
 end
