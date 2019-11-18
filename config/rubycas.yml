@@ -1,13 +1,13 @@
 
 default: &default
-  infoline: Powered by <a href="http://rubycas.github.com">RubyCAS-Server-Core</a>
-  log:
-    output: log/casserver.log
-    level: INFO
   maximum_unused_login_ticket_lifetime: 300
   maximum_unused_service_ticket_lifetime: 300
   maximum_session_lifetime: 172800
   maximum_remember_me_lifetime: 604800
+  infoline: Powered by <a href="http://rubycas.github.com">RubyCAS-Server-Core</a>
+  log:
+    output: log/casserver.log
+    level: INFO
   database: &default_db
     database: platform
     reconnect: true
@@ -42,6 +42,9 @@ development:
   authenticator:
     <<: *default_bz_auth
     server: joinweb
+    ssl: false
+    port: 3001
+    allow_self_signed: true
 
 test:
   <<: *default
@@ -60,8 +63,13 @@ test:
   authenticator:
     <<: *default_bz_auth
     server: joinweb
+    ssl: false
+    port: 3001
+    allow_self_signed: true
   uri_path: /test
   disable_auto_migrations: true
   quiet: true
   default_locale: en
   enable_single_sign_out: true
+
+  
