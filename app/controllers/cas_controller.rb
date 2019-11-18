@@ -163,7 +163,6 @@ class CasController < ApplicationController
         logger.info("Credentials for username '#{@username}' successfully validated using #{successful_authenticator.class.name}.")
         logger.debug("Authenticator provided additional user attributes: #{extra_attributes.inspect}") unless extra_attributes.blank?
 
-        # 3.6 (ticket-granting cookie)
         tgt = generate_ticket_granting_ticket(@username, extra_attributes)
         response.set_cookie('tgt', tgt.to_s)
 
@@ -190,15 +189,17 @@ class CasController < ApplicationController
         end
       else
         logger.warn("Invalid credentials given for user '#{@username}'")
-        @message = {:type => 'mistake', :message => "Incorrect username or password."}
-        render :json => @message, status: :unauthorized
+        @message = {
+          :type => 'mistake', :message => "Incorrect username or password."
+        }
+        return render :login, status: :unauthorized
       end
     rescue RubyCAS::Server::Core::AuthenticatorError => e
       logger.error(e)
       # generate another login ticket to allow for re-submitting the form
       @lt = LT.generate_login_ticket(c).ticket
       @message = {:type => 'mistake', :message => e.to_s}
-      render :json => @message, status: :unauthorized
+      return render :login , status: :unauthorized
     end
 
     render :login
