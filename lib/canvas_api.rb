@@ -27,7 +27,7 @@ class CanvasAPI
     RestClient.get("#{@canvas_url}#{path}", params, @global_headers.merge(headers))
   end
 
-def post(path, body, headers={})
+  def post(path, body, headers={})
     RestClient.post("#{@canvas_url}#{path}", body, @global_headers.merge(headers))
   end
 
