@@ -11,14 +11,14 @@ class CasController < ApplicationController
 
   def login
     # make sure there's no caching
-    headers['Pragma'] = 'no-cache'
-    headers['Cache-Control'] = 'no-store'
-    headers['Expires'] = (Time.now - 1.year).rfc2822
+    request.headers['Pragma'] = 'no-cache'
+    request.headers['Cache-Control'] = 'no-store'
+    request.headers['Expires'] = (Time.now - 1.year).rfc2822
 
     c = request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']
 
     # optional params
-    @service = Utils.clean_service_url(params['service'])
+    @service = Utils.clean_service_url(params['service']) if params['service']
     @renew = params['renew']
     @gateway = params['gateway'] == 'true' || params['gateway'] == '1'
 
@@ -27,8 +27,10 @@ class CasController < ApplicationController
     end
 
     if tgt && !tgt_error
-      @message = {:type => 'notice',
-        :message => "You are currently logged in as '#{tgt.username}'. If this is not you, please log in below."}
+      @message = {
+        :type => 'notice',
+        :message => "You are currently logged in as '#{tgt.username}'. If this is not you, please log in below."
+      }
     elsif tgt_error
       logger.debug("Ticket granting cookie could not be validated: #{tgt_error}")
     elsif !tgt
@@ -36,8 +38,10 @@ class CasController < ApplicationController
     end
 
     if params['redirection_loop_intercepted']
-      @message = {:type => 'mistake',
-        :message => "The client and server are unable to negotiate authentication. Please try logging in again later."}
+      @message = {
+        :type => 'mistake',
+        :message => "The client and server are unable to negotiate authentication. Please try logging in again later."
+      }
     end
 
     begin
@@ -58,8 +62,10 @@ class CasController < ApplicationController
         end
       elsif @gateway
           logger.error("This is a gateway request but no service parameter was given!")
-          @message = {:type => 'mistake',
-            :message => "The server cannot fulfill this gateway request because no service parameter was given."}
+          @message = {
+            :type => 'mistake',
+            :message => "The server cannot fulfill this gateway request because no service parameter was given."
+          }
       else
         logger.info("Proceeding with CAS login without a target service.")
       end
@@ -67,7 +73,7 @@ class CasController < ApplicationController
       logger.error("The service '#{@service}' is not a valid URI!")
       @message = {:type => 'mistake',
         :message => "The target service your browser supplied appears to be invalid. Please contact your system administrator for help."
-        }
+      }
     end
 
     lt = LT.generate_login_ticket(c)
@@ -83,7 +89,8 @@ class CasController < ApplicationController
     # action for the form, otherwise the server will try to guess this for you.
     if params.has_key? 'onlyLoginForm'
       if request.env['HTTP_HOST']
-        guessed_login_uri = "#{request.env['HTTPS']}://#{request.env['REQUEST_URI']}#{self / '/login'}"
+        @protocol = request.env['HTTPS'] == 'on' ? 'https' : 'http'
+        guessed_login_uri = "#{@protocol}://#{request.env['REQUEST_URI']}/login"
       else
         guessed_login_uri = nil
       end

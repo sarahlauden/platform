@@ -97,6 +97,20 @@ RSpec.describe CasController, type: :routing do
         # New ticket should be generated
         expect(current_url).not_to include(@params["ticket"])
       end
+
+      it "logs in successfully using onlyLoginForm parameter" do
+        # Goto form only version of login page
+        visit "/login?onlyLoginForm=true"
+
+        fill_in "username", :with => VALID_USERNAME
+        fill_in "password", :with => VALID_PASSWORD
+
+        expect(page).to have_button("login-submit", disabled: false)
+        click_button "login-submit"
+
+        # Ensure that the login was successful
+        expect(page).to have_content("You have successfully logged in")
+      end
     end
   end
 end
