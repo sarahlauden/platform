@@ -8,6 +8,7 @@ default: &default
   log:
     output: log/casserver.log
     level: INFO
+  public_site_domain: join.bebraven.org
   database: &default_db
     database: platform
     reconnect: true

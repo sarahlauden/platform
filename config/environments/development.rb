@@ -70,5 +70,4 @@ Rails.application.configure do
   config.middleware.insert_after ActionDispatch::Static, Rack::LiveReload
 
   config.logger = Logger.new(STDOUT)
-
 end
