@@ -10,8 +10,6 @@ class CanvasAPI
     }
   end
 
-  public
-
   def update_course_page(course_id, wiki_page_id, wiki_page_body)
     body = {
       'wiki_page[body]' => wiki_page_body,
