@@ -264,7 +264,6 @@ class CasController < ApplicationController
 
   def loginTicket
     logger.error("Tried to use login ticket dispenser with get method!")
-
     render :json => {:response => "To generate a login ticket, you must make a POST request."}, status: :unprocessable_entity
   end
   
@@ -276,9 +275,7 @@ class CasController < ApplicationController
 
     logger.debug("Dispensing login ticket #{lt} to host #{(request.env['HTTP_X_FORWARDED_FOR'] || request.env['REMOTE_HOST'] || request.env['REMOTE_ADDR']).inspect}")
 
-    @lt = lt.ticket
-
-    @lt
+    render :json => {:ticket => lt.ticket}
   end
 
   def validate
