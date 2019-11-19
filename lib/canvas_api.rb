@@ -29,7 +29,6 @@ class CanvasAPI
   end
 
   def put(path, body, headers={})
-    puts @global_headers
     RestClient.put("#{@api_url}#{path}", body, @global_headers.merge(headers))
   end
 end
