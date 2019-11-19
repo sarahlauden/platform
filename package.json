@@ -7,6 +7,7 @@
     "@babel/preset-react": "^7.6.3",
     "@ckeditor/ckeditor5-adapter-ckfinder": "^15.0.0",
     "@ckeditor/ckeditor5-autoformat": "^15.0.0",
+    "@ckeditor/ckeditor5-autosave": "^15.0.0",
     "@ckeditor/ckeditor5-basic-styles": "^15.0.0",
     "@ckeditor/ckeditor5-block-quote": "^15.0.0",
     "@ckeditor/ckeditor5-build-classic": "^15.0.0",
