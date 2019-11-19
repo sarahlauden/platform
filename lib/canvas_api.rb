@@ -18,10 +18,8 @@ class CanvasAPI
     put("/courses/#{course_id}/pages/#{wiki_page_id}", body)
   end
 
-  private
-
-  def get(path, params, headers={})
-    RestClient.get("#{@api_url}#{path}", params, @global_headers.merge(headers))
+  def get(path, params={}, headers={})
+    RestClient.get("#{@api_url}#{path}", {params: params}.merge(@global_headers.merge(headers)))
   end
 
   def post(path, body, headers={})
