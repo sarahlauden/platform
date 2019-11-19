@@ -51,6 +51,8 @@ ActiveRecord::Schema.define(version: 2019_11_14_183555) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "course_id"
+    # secondary_id will represent different things depending on the content_type.
+    # e.g. for modules, it will be a page ID; for assignments an assignment ID.
     t.string "secondary_id"
     t.string "course_name"
   end
