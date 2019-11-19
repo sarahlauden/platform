@@ -7,10 +7,6 @@ class CourseContent < ApplicationRecord
 
     response = canvas.update_course_page(params[:course_id], params[:secondary_id], params[:body])
 
-    if response.code == 200 then
-      true
-    else
-      false
-    end
+    response.code == 200
   end
 end
