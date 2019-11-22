@@ -30,6 +30,7 @@ import Indent from '@ckeditor/ckeditor5-indent/src/indent';
 import Italic from '@ckeditor/ckeditor5-basic-styles/src/italic';
 import Link from '@ckeditor/ckeditor5-link/src/link';
 import List from '@ckeditor/ckeditor5-list/src/list';
+import TodoList from '@ckeditor/ckeditor5-list/src/todolist';
 import MediaEmbed from '@ckeditor/ckeditor5-media-embed/src/mediaembed';
 import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
 import PasteFromOffice from '@ckeditor/ckeditor5-paste-from-office/src/pastefromoffice';
@@ -40,6 +41,8 @@ import UploadAdapter from '@ckeditor/ckeditor5-adapter-ckfinder/src/uploadadapte
 
 // CKEditor plugin implementing a content part widget to be used in the editor content.
 import ContentPartPreviewEditing from '../ckeditor/contentpartpreviewediting';
+import ChecklistQuestionEditing from '../ckeditor/checklistquestionediting';
+import SectionEditing from '../ckeditor/sectionediting';
 
 // React components to render the list of content parts and the content part preview.
 import ContentPartList from './ContentPartList';
@@ -65,6 +68,7 @@ BalloonEditor.builtinPlugins = [
     Italic,
     Link,
     List,
+    TodoList,
     MediaEmbed,
     Paragraph,
     PasteFromOffice,
@@ -72,7 +76,9 @@ BalloonEditor.builtinPlugins = [
     TableToolbar,
     UploadAdapter,
 
-    ContentPartPreviewEditing
+    ContentPartPreviewEditing,
+    SectionEditing,
+    ChecklistQuestionEditing
 ];
 
 // Editor configuration.
@@ -82,6 +88,7 @@ BalloonEditor.defaultConfig = {
         '|',
         'bulletedList',
         'numberedList',
+        'todoList',
         '|',
         'indent',
         'outdent',
@@ -103,6 +110,7 @@ BalloonEditor.defaultConfig = {
             'link',
             'bulletedList',
             'numberedList',
+            'todoList',
             '|',
             'indent',
             'outdent',
@@ -272,14 +280,26 @@ class ContentEditor extends Component {
 
                             <TabPanel>
                                 <div id="toolbar-components">
-                                    <ContentPartList
-                                        key="content-part-list"
-                                        contentParts={this.props.contentParts}
-                                        onClick={( id ) => {
-                                            this.editor.execute( 'insertContentPart', id );
-                                            this.editor.editing.view.focus();
-                                        }}
-                                    />
+                                    <ul key="content-part-list" id="widget-list">
+                                        <ContentPartPreview
+                                            id="1"
+                                            key="1"
+                                            onClick={( id ) => {
+                                                this.editor.execute( 'insertSection', id );
+                                                this.editor.editing.view.focus();
+                                            }}
+                                            {...{name: 'Section', id: 1}}
+                                        />
+                                        <ContentPartPreview
+                                            id="2"
+                                            key="2"
+                                            onClick={( id ) => {
+                                                this.editor.execute( 'insertChecklistQuestion', id );
+                                                this.editor.editing.view.focus();
+                                            }}
+                                            {...{name: 'Checklist Question', id: 2}}
+                                        />
+                                    </ul>
                                 </div>
                             </TabPanel>
                             <TabPanel>Not Implemented</TabPanel>
