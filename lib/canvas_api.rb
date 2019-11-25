@@ -2,11 +2,11 @@ require 'rest-client'
 
 class CanvasAPI
 
-  def initialize(canvas_url, auth_token)
+  def initialize(canvas_url, canvas_token)
     @canvas_url = canvas_url
     @api_url = "#{@canvas_url}/api/v1"
     @global_headers = {
-      'Authorization' => "Bearer #{auth_token}",
+      'Authorization' => "Bearer #{canvas_token}",
     }
   end
 
