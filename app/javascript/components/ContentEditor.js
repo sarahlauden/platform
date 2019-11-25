@@ -288,7 +288,7 @@ class ContentEditor extends Component {
                                                 this.editor.execute( 'insertSection', id );
                                                 this.editor.editing.view.focus();
                                             }}
-                                            {...{name: 'Section', id: 1}}
+                                            {...{name: 'Section', id: Math.floor(Math.random() * 1e16)}}
                                         />
                                         <ContentPartPreview
                                             id="2"
@@ -297,7 +297,7 @@ class ContentEditor extends Component {
                                                 this.editor.execute( 'insertChecklistQuestion', id );
                                                 this.editor.editing.view.focus();
                                             }}
-                                            {...{name: 'Checklist Question', id: 2}}
+                                            {...{name: 'Checklist Question', id: Math.floor(Math.random() * 1e16)}}
                                         />
                                     </ul>
                                 </div>

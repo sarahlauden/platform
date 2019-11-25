@@ -79,7 +79,8 @@ export default class ChecklistQuestionEditing extends Plugin {
 
         schema.register( 'checkbox', {
             // Cannot be split or left by the caret.
-            isLimit: true,
+            //isLimit: true,
+            isInline: true,
 
             allowIn: 'questionFieldset',
 
@@ -300,7 +301,7 @@ export default class ChecklistQuestionEditing extends Plugin {
             model: 'checkbox',
             view: ( modelElement, viewWriter ) => {
                 // Note: You use a more specialized createEditableElement() method here.
-                const div = viewWriter.createContainerElement( 'div', {} );
+                const div = viewWriter.createEditableElement( 'div', {} );
                 const label = viewWriter.createEmptyElement( 'input', {'type': 'checkbox'} );
                 const input = viewWriter.createEditableElement( 'label', {} );
 

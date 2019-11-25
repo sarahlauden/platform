@@ -3,7 +3,7 @@ import Command from '@ckeditor/ckeditor5-core/src/command';
 export default class InsertSectionCommand extends Command {
     execute( id ) {
         this.editor.model.change( writer => {
-            this.editor.model.insertContent( writer.createElement( 'section', { id } ) );
+            this.editor.model.insertContent( createSection( writer, id ) );
         } );
     }
 
@@ -14,4 +14,14 @@ export default class InsertSectionCommand extends Command {
 
         this.isEnabled = allowedIn !== null;
     }
+}
+
+function createSection( writer, id ) {
+    const section = writer.createElement( 'section', {id: id} );
+
+    // There must be at least one paragraph for the description to be editable.
+    // See https://github.com/ckeditor/ckeditor5/issues/1464.
+    writer.appendElement( 'paragraph', section );
+
+    return section;
 }
