@@ -291,22 +291,22 @@ export default class ChecklistQuestionEditing extends Plugin {
             }
 
         } );
-        conversion.for( 'dataDowncast' ).elementToElement( {
+        /*conversion.for( 'dataDowncast' ).elementToElement( {
             model: 'checkbox',
             view: {
                 name: 'div'
             }
-        } );
-        conversion.for( 'editingDowncast' ).elementToElement( {
+        } );*/
+        conversion.for( 'downcast' ).elementToElement( {
             model: 'checkbox',
             view: ( modelElement, viewWriter ) => {
                 // Note: You use a more specialized createEditableElement() method here.
-                const div = viewWriter.createEditableElement( 'div', {} );
-                const label = viewWriter.createEmptyElement( 'input', {'type': 'checkbox'} );
-                const input = viewWriter.createEditableElement( 'label', {} );
+                const div = viewWriter.createContainerElement( 'div', {} );
+                const input = viewWriter.createEmptyElement( 'input', {'type': 'checkbox'} );
+                const label = viewWriter.createEditableElement( 'label', {} );
 
-                viewWriter.insert( viewWriter.createPositionAt( div, 0 ), label );
-                viewWriter.insert( viewWriter.createPositionAt( div, 1 ), input );
+                viewWriter.insert( viewWriter.createPositionAt( div, 0 ), input );
+                viewWriter.insert( viewWriter.createPositionAt( div, 1 ), label );
                 return toWidgetEditable( div, viewWriter );
             }
         } );
