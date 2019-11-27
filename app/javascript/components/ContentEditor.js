@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import CKEditor from '@ckeditor/ckeditor5-react';
+import Rails from '@rails/ujs';
+
+// Non-ckeditor React imports
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+//import 'react-tabs/style/react-tabs.css';
 
 // The official CKEditor 5 instance inspector. It helps understand the editor view and model.
 import CKEditorInspector from '@ckeditor/ckeditor5-inspector';
@@ -139,7 +144,8 @@ class ContentEditor extends Component {
         this.state = {
             // The initial editor data. It is bound to the editor instance and will change as
             // the user types and modifies the content of the editor.
-            editorData: props.data,
+            editorData: props.course_content['body'] || "",
+            isPublished: false
         };
 
         // The configuration of the <CKEditor> instance.
@@ -166,7 +172,17 @@ class ContentEditor extends Component {
     // It updates the state of the application.
     handleEditorDataChange( evt, editor ) {
         this.setState( {
-            editorData: editor.getData()
+            editorData: editor.getData(),
+            isPublished: false
+        } );
+    }
+
+    // A handler executed when the user types or modifies the raw html editor content.
+    // It updates the state of the application.
+    handleHTMLEditorDataChange( evt ) {
+        this.setState( {
+            editorData: evt.target.value,
+            isPublished: false
         } );
     }
 
@@ -184,6 +200,31 @@ class ContentEditor extends Component {
         CKEditorInspector.attach( editor );
     }
 
+    handlePublish( evt ) {
+        fetch("/course_contents/1/publish.json", {
+                method: 'POST',
+                body: JSON.stringify(this.props.course_content), // data can be `string` or {object}!
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': Rails.csrfToken()
+                }
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState( {'isPublished': true} );
+                    // TODO: provide a way for the user to easily view the result, which will be in:
+                    // `${CANVAS_URL}/courses/${result['course_id']}/pages/${result['secondary_id']}`
+                },
+                // Note: it's important to handle errors here
+                // instead of a catch() block so that we don't swallow
+                // exceptions from actual bugs in components.
+                (error) => {
+                    console.log(error);
+                }
+            );
+    }
+
     render() {
             // The application renders two columns:
             // * in the left one, the <CKEditor> and the textarea displaying live
@@ -191,28 +232,91 @@ class ContentEditor extends Component {
             // * in the right column, a <ContentPartList> is rendered with available <ContentPartPreviews>
             //   to choose from.
         return (
-            <div className="demo" key="content-editor">
-                <div className="demo__offer-editor" key="offer-editor">
-                    <h3>Content editor</h3>
-                    <CKEditor
-                        editor={BalloonEditor}
-                        data={this.state.editorData}
-                        config={this.editorConfig}
-                        onChange={this.handleEditorDataChange}
-                        onInit={this.handleEditorInit}
-                    />
+            <div id="container" key="content-editor">
+                <header>
+                    <h1>Braven Content Editor</h1>
+                    <span id="autosave-indicator" className="saved">Saved</span>
+                    <span id="autosave-indicator" className="saving">Saving...</span>
 
-                    <h3>HTML View</h3>
-                    <textarea value={this.state.editorData} readOnly={true} name="content[body]"></textarea>
-                </div>
-                <ContentPartList
-                    key="content-part-list"
-                    contentParts={this.props.contentParts}
-                    onClick={( id ) => {
-                        this.editor.execute( 'insertContentPart', id );
-                        this.editor.editing.view.focus();
-                    }}
-                />
+                    <ul>
+                        <li onClick={(evt) => this.handlePublish(evt)} className={this.state['isPublished'] ? "success" : ""}>
+                          Publish{this.state['isPublished'] ? "ed" : ""} {this.state['isPublished']}
+                        </li>
+                    </ul>
+
+                </header>
+
+                <main>
+                    <div id="vertical-toolbar">
+                        <div id="toolbar-page-settings">
+                            <h4>Page Details</h4>
+                            <ul id="edit-page">
+                                <li><i className="fas fa-trash-alt"></i></li>
+                                <li className="active"><i className="fas fa-copy"></i></li>
+                            </ul>
+                            <h2>
+                                <input type="text" name="course_content[title]"
+                                       defaultValue={this.props.course_content['title']}
+                                       placeholder="Page Title"
+                                />
+                            </h2>
+                            <h4>Insert Component</h4>
+
+                        </div>
+                        <Tabs>
+                            <TabList id="component-types">
+                                <Tab className="active">Content</Tab>
+                                <Tab>Question</Tab>
+                                <Tab>Library</Tab>
+                            </TabList>
+
+                            <TabPanel>
+                                <div id="toolbar-components">
+                                    <ContentPartList
+                                        key="content-part-list"
+                                        contentParts={this.props.contentParts}
+                                        onClick={( id ) => {
+                                            this.editor.execute( 'insertContentPart', id );
+                                            this.editor.editing.view.focus();
+                                        }}
+                                    />
+                                </div>
+                            </TabPanel>
+                            <TabPanel>Not Implemented</TabPanel>
+                            <TabPanel>Not Implemented</TabPanel>
+                        </Tabs>
+                    </div>
+                    <Tabs>
+                        <div id="workspace">
+                            <TabList id="view-mode">
+                                <Tab className="active">Design</Tab>
+                                <Tab>Code</Tab>
+                            </TabList>
+                            <TabPanel>
+                                <div id="wysiwyg-container">
+                                    <CKEditor
+                                        editor={BalloonEditor}
+                                        data={this.state.editorData}
+                                        config={this.editorConfig}
+                                        onChange={this.handleEditorDataChange}
+                                        onInit={this.handleEditorInit}
+                                    />
+                                </div>
+                                <textarea value={this.state.editorData}
+                                          className="secret-html"
+                                          readOnly={true}
+                                          name="course_content[body]"></textarea>
+                            </TabPanel>
+                            <TabPanel>
+                                <div id="raw-html-container">
+                                    <textarea value={this.state.editorData}
+                                              onChange={(evt) => this.handleHTMLEditorDataChange(evt)}
+                                              name="course_content[body]"></textarea>
+                                </div>
+                            </TabPanel>
+                        </div>
+                    </Tabs>
+                </main>
             </div>
         );
     }

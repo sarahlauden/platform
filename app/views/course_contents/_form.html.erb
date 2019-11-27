@@ -1,12 +1,12 @@
-<%= form_with(model: content, local: true) do |form| %>
+<%= form_with(model: course_content, local: true) do |form| %>
   <%= javascript_pack_tag 'content_editor' %>
 
-  <% if content.errors.any? %>
+  <% if course_content.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(content.errors.count, "error") %> prohibited this content from being saved:</h2>
+      <h2><%= pluralize(course_content.errors.count, "error") %> prohibited this course_content from being saved:</h2>
 
       <ul>
-        <% content.errors.full_messages.each do |message| %>
+        <% course_content.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
       </ul>
@@ -14,13 +14,7 @@
   <% end %>
 
   <div class="field">
-    <%= form.label :title %>
-    <%= form.text_field :title %>
-  </div>
-
-  <div class="field">
-    <%= form.label :body %>
-    <%= react_component('ContentEditor', { data: content.body,
+    <%= react_component('ContentEditor', { course_content: course_content,
         contentParts: [
             {
                 id: 1,
@@ -39,11 +33,6 @@
             },
         ]
                     }) %>
-  </div>
-
-  <div class="field">
-    <%= form.label :content_type %>
-    <%= form.text_field :content_type %>
   </div>
 
   <div class="actions">

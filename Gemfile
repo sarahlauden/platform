@@ -55,6 +55,8 @@ group :test do
   gem 'selenium-webdriver'
   # Easy installation and use of web drivers to run system tests with browsers
   gem 'webdrivers'
+  # HTTP request mocking
+  gem 'webmock', require: false
 
   # Report test coverage
   gem 'codacy-coverage'
@@ -66,6 +68,8 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'paranoia'
 gem 'will_paginate'
 gem 'bulk_insert'
+
+gem 'rest-client'
 
 gem 'devise'
 gem 'devise_cas_authenticatable'

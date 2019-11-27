@@ -23,7 +23,7 @@ require 'rails_helper'
 # removed from Rails core in Rails 5, but can be added back in via the
 # `rails-controller-testing` gem.
 
-RSpec.describe ContentsController, type: :controller do
+RSpec.describe CourseContentsController, type: :controller do
   render_views
   let(:user) { create :user, admin: true }
 
@@ -32,7 +32,7 @@ RSpec.describe ContentsController, type: :controller do
   end
 
   # This should return the minimal set of attributes required to create a valid
-  # Content. As you add validations to Content, be sure to
+  # CourseContent. As you add validations to CourseContent, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
     { title: "MyTitle", body: "<html></html>" }
@@ -45,12 +45,12 @@ RSpec.describe ContentsController, type: :controller do
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
-  # ContentsController. Be sure to keep this updated too.
+  # CourseContentsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
   describe "GET #index" do
     it "returns a success response" do
-      Content.create! valid_attributes
+      CourseContent.create! valid_attributes
       get :index, params: {}, session: valid_session
       expect(response).to be_successful
     end
@@ -58,8 +58,8 @@ RSpec.describe ContentsController, type: :controller do
 
   describe "GET #show" do
     it "returns a success response" do
-      content = Content.create! valid_attributes
-      get :show, params: {id: content.to_param}, session: valid_session
+      course_content = CourseContent.create! valid_attributes
+      get :show, params: {id: course_content.to_param}, session: valid_session
       expect(response).to be_successful
     end
   end
@@ -73,29 +73,29 @@ RSpec.describe ContentsController, type: :controller do
 
   describe "GET #edit" do
     it "returns a success response" do
-      content = Content.create! valid_attributes
-      get :edit, params: {id: content.to_param}, session: valid_session
+      course_content = CourseContent.create! valid_attributes
+      get :edit, params: {id: course_content.to_param}, session: valid_session
       expect(response).to be_successful
     end
   end
 
   describe "POST #create" do
     context "with valid params" do
-      it "creates a new Content" do
+      it "creates a new CourseContent" do
         expect {
-          post :create, params: {content: valid_attributes}, session: valid_session
-        }.to change(Content, :count).by(1)
+          post :create, params: {course_content: valid_attributes}, session: valid_session
+        }.to change(CourseContent, :count).by(1)
       end
 
-      it "redirects to the created content" do
-        post :create, params: {content: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(Content.last)
+      it "redirects to the created course_content" do
+        post :create, params: {course_content: valid_attributes}, session: valid_session
+        expect(response).to redirect_to(CourseContent.last)
       end
     end
 
     context "with invalid params" do
       it "returns a success response (i.e. to display the 'new' template)" do
-        post :create, params: {content: invalid_attributes}, session: valid_session
+        post :create, params: {course_content: invalid_attributes}, session: valid_session
         expect(response).to be_successful
       end
     end
@@ -107,42 +107,42 @@ RSpec.describe ContentsController, type: :controller do
         { title: "My New Title",body: "<p>words :)</p>" }
       }
 
-      it "updates the requested content" do
-        content = Content.create! valid_attributes
-        put :update, params: {id: content.to_param, content: new_attributes}, session: valid_session
-        content.reload
-        expect(content).to have_attributes(new_attributes)
+      it "updates the requested course_content" do
+        course_content = CourseContent.create! valid_attributes
+        put :update, params: {id: course_content.to_param, course_content: new_attributes}, session: valid_session
+        course_content.reload
+        expect(course_content).to have_attributes(new_attributes)
         skip("Add assertions for updated state")
       end
 
-      it "redirects to the content" do
-        content = Content.create! valid_attributes
-        put :update, params: {id: content.to_param, content: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(content)
+      it "redirects to the course_content" do
+        course_content = CourseContent.create! valid_attributes
+        put :update, params: {id: course_content.to_param, course_content: valid_attributes}, session: valid_session
+        expect(response).to redirect_to(course_content)
       end
     end
 
     context "with invalid params" do
       it "returns a success response (i.e. to display the 'edit' template)" do
-        content = Content.create! valid_attributes
-        put :update, params: {id: content.to_param, content: invalid_attributes}, session: valid_session
+        course_content = CourseContent.create! valid_attributes
+        put :update, params: {id: course_content.to_param, course_content: invalid_attributes}, session: valid_session
         expect(response).to be_successful
       end
     end
   end
 
   describe "DELETE #destroy" do
-    it "destroys the requested content" do
-      content = Content.create! valid_attributes
+    it "destroys the requested course_content" do
+      course_content = CourseContent.create! valid_attributes
       expect {
-        delete :destroy, params: {id: content.to_param}, session: valid_session
-      }.to change(Content, :count).by(-1)
+        delete :destroy, params: {id: course_content.to_param}, session: valid_session
+      }.to change(CourseContent, :count).by(-1)
     end
 
-    it "redirects to the contents list" do
-      content = Content.create! valid_attributes
-      delete :destroy, params: {id: content.to_param}, session: valid_session
-      expect(response).to redirect_to(contents_url)
+    it "redirects to the course_contents list" do
+      course_content = CourseContent.create! valid_attributes
+      delete :destroy, params: {id: course_content.to_param}, session: valid_session
+      expect(response).to redirect_to(course_contents_url)
     end
   end
 
