@@ -24,7 +24,9 @@ function createChecklistQuestion( writer, id ) {
     const questionTitle = writer.createElement( 'questionTitle' );
     const questionForm = writer.createElement( 'questionForm' );
     const questionFieldset = writer.createElement( 'questionFieldset' );
-    const checkbox = writer.createElement( 'checkbox' );
+    const checkboxDiv = writer.createElement( 'checkboxDiv' );
+    const checkboxInput = writer.createElement( 'checkboxInput' );
+    const checkboxLabel = writer.createElement( 'checkboxLabel' );
     const answer = writer.createElement( 'answer' );
     const answerTitle = writer.createElement( 'answerTitle' );
     const answerText = writer.createElement( 'answerText' );
@@ -33,7 +35,9 @@ function createChecklistQuestion( writer, id ) {
     writer.append( questionTitle, question );
     writer.append( questionForm, question );
     writer.append( questionFieldset, questionForm );
-    writer.append( checkbox, questionFieldset );
+    writer.append( checkboxDiv, questionFieldset );
+    writer.append( checkboxInput, checkboxDiv );
+    writer.append( checkboxLabel, checkboxDiv );
     writer.append( answer, checklistQuestion );
     writer.append( answerTitle, answer );
     writer.append( answerText, answer );

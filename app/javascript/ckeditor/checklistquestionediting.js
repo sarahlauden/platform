@@ -2,6 +2,7 @@ import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import { toWidget, toWidgetEditable } from '@ckeditor/ckeditor5-widget/src/utils';
 import Widget from '@ckeditor/ckeditor5-widget/src/widget';
 import InsertChecklistQuestionCommand from './insertchecklistquestioncommand';
+import InsertCheckboxCommand from './insertcheckboxcommand';
 
 export default class ChecklistQuestionEditing extends Plugin {
     static get requires() {
@@ -13,6 +14,7 @@ export default class ChecklistQuestionEditing extends Plugin {
         this._defineConverters();
 
         this.editor.commands.add( 'insertChecklistQuestion', new InsertChecklistQuestionCommand( this.editor ) );
+        this.editor.commands.add( 'insertCheckbox', new InsertCheckboxCommand( this.editor ) );
     }
 
     _defineSchema() {
@@ -64,7 +66,7 @@ export default class ChecklistQuestionEditing extends Plugin {
             allowIn: 'questionForm',
 
             // Allow content which is allowed in the root (e.g. paragraphs).
-            allowContentOf: ['questionLegend', 'checkbox'],
+            //allowContentOf: ['questionLegend', 'checkbox'],
         } );
 
         schema.register( 'questionLegend', {
@@ -77,17 +79,40 @@ export default class ChecklistQuestionEditing extends Plugin {
             allowContentOf: '$block'
         } );
 
-        schema.register( 'checkbox', {
+        schema.register( 'checkboxDiv', {
             // Cannot be split or left by the caret.
-            //isLimit: true,
-            isInline: true,
+            isLimit: true,
 
             allowIn: 'questionFieldset',
 
             // Allow content which is allowed in blocks (i.e. text with attributes).
-            allowContentOf: '$block',
+            allowContentOf: '$root',
+        } );
+
+        schema.register( 'checkboxInput', {
+            // Cannot be split or left by the caret.
+            //isLimit: true,
+            isInline: true,
+
+            allowIn: 'checkboxDiv',
+
+            // Allow content which is allowed in blocks (i.e. text with attributes).
+            //allowContentOf: '$block',
 
             allowAttributes: [ 'id', 'name', 'value' ]
+        } );
+
+        schema.register( 'checkboxLabel', {
+            // Cannot be split or left by the caret.
+            //isLimit: true,
+            isInline: true,
+
+            allowIn: 'checkboxDiv',
+
+            // Allow content which is allowed in blocks (i.e. text with attributes).
+            allowContentOf: '$block',
+
+            allowAttributes: [ 'for' ]
         } );
 
         schema.register( 'answer', {
@@ -263,7 +288,12 @@ export default class ChecklistQuestionEditing extends Plugin {
 
         // <questionFieldset> converters
         conversion.for( 'upcast' ).elementToElement( {
-            model: 'questionFieldset',
+            //model: 'questionFieldset',
+            model: ( viewElement, modelWriter ) => {
+                MODEL_WRITER = modelWriter;
+
+                return modelWriter.createElement( 'questionFieldset' );
+            },
             view: {
                 name: 'fieldset'
             }
@@ -278,14 +308,15 @@ export default class ChecklistQuestionEditing extends Plugin {
             model: 'questionFieldset',
             view: ( modelElement, viewWriter ) => {
                 const fieldset = viewWriter.createContainerElement( 'fieldset' );
+                FIELDSET = fieldset;
 
                 return toWidget( fieldset, viewWriter );
             }
         } );
 
-        // <checkbox> converters
+        // <checkboxDiv> converters
         conversion.for( 'upcast' ).elementToElement( {
-            model: 'checkbox',
+            model: 'checkboxDiv',
             view: {
                 name: 'div'
             }
@@ -298,16 +329,54 @@ export default class ChecklistQuestionEditing extends Plugin {
             }
         } );*/
         conversion.for( 'downcast' ).elementToElement( {
-            model: 'checkbox',
+            model: 'checkboxDiv',
             view: ( modelElement, viewWriter ) => {
                 // Note: You use a more specialized createEditableElement() method here.
-                const div = viewWriter.createContainerElement( 'div', {} );
-                const input = viewWriter.createEmptyElement( 'input', {'type': 'checkbox'} );
-                const label = viewWriter.createEditableElement( 'label', {} );
-
-                viewWriter.insert( viewWriter.createPositionAt( div, 0 ), input );
-                viewWriter.insert( viewWriter.createPositionAt( div, 1 ), label );
+                const div = viewWriter.createEditableElement( 'div', {} );
                 return toWidgetEditable( div, viewWriter );
+            }
+        } );
+
+        // <checkbox> converters
+        conversion.for( 'upcast' ).elementToElement( {
+            model: 'checkboxInput',
+            view: {
+                name: 'input'
+            }
+
+        } );
+        conversion.for( 'downcast' ).elementToElement( {
+            model: 'checkboxInput',
+            view: ( modelElement, viewWriter ) => {
+                // Note: You use a more specialized createEditableElement() method here.
+                const input = viewWriter.createEmptyElement( 'input', {'type': 'checkbox'} );
+                return toWidget( input, viewWriter );
+            }
+        } );
+
+        // <checkbox> converters
+        conversion.for( 'upcast' ).elementToElement( {
+            model: 'checkboxLabel',
+            view: {
+                name: 'label'
+            }
+
+        } );
+        conversion.for( 'downcast' ).elementToElement( {
+            model: 'checkboxLabel',
+            view: ( modelElement, viewWriter ) => {
+                console.log(modelElement);
+                console.log(viewWriter);
+                // Note: You use a more specialized createEditableElement() method here.
+                const label = viewWriter.createEditableElement( 'label', {} );
+                //label.on( 'change:data', 'insertCheckbox' );
+                modelElement.document.on( 'enter', ()=>{console.log('oiudhfaoidufhaidufhaihfiauhdfiauhfakohfd');} );
+                VIEW_WRITER = viewWriter;
+                viewWriter.document.on( 'enter', dosomething);
+                console.log(label);
+                //console.log(label.parent);
+
+                return toWidgetEditable( label, viewWriter );
             }
         } );
 
@@ -382,4 +451,25 @@ export default class ChecklistQuestionEditing extends Plugin {
         } );
 
     }
+}
+
+var VIEW_WRITER;
+var MODEL_WRITER;
+var FIELDSET;
+function dosomething( evt, data, api ) {
+        console.log("===========================");
+        console.log(MODEL_WRITER, evt, data);
+
+
+    const checkboxDiv = MODEL_WRITER.createContainerElement( 'checkboxDiv' );
+    const checkboxInput = MODEL_WRITER.createEmptyElement( 'checkboxInput' );
+    const checkboxLabel = MODEL_WRITER.createEditableElement( 'checkboxLabel' );
+
+    MODEL_WRITER.insert( MODEL_WRITER.createPositionAt( FIELDSET, 0 ), checkboxDiv );
+
+    /*
+    VIEW_WRITER.append( checkboxDiv, questionFieldset );
+    VIEW_WRITER.append( checkboxInput, checkboxDiv );
+    VIEW_WRITER.append( checkboxLabel, checkboxDiv );
+    */
 }

@@ -30,7 +30,6 @@ import Indent from '@ckeditor/ckeditor5-indent/src/indent';
 import Italic from '@ckeditor/ckeditor5-basic-styles/src/italic';
 import Link from '@ckeditor/ckeditor5-link/src/link';
 import List from '@ckeditor/ckeditor5-list/src/list';
-import TodoList from '@ckeditor/ckeditor5-list/src/todolist';
 import MediaEmbed from '@ckeditor/ckeditor5-media-embed/src/mediaembed';
 import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
 import PasteFromOffice from '@ckeditor/ckeditor5-paste-from-office/src/pastefromoffice';
@@ -43,6 +42,7 @@ import UploadAdapter from '@ckeditor/ckeditor5-adapter-ckfinder/src/uploadadapte
 import ContentPartPreviewEditing from '../ckeditor/contentpartpreviewediting';
 import ChecklistQuestionEditing from '../ckeditor/checklistquestionediting';
 import SectionEditing from '../ckeditor/sectionediting';
+import TodoList from '../ckeditor/todolist';
 
 // React components to render the list of content parts and the content part preview.
 import ContentPartList from './ContentPartList';
