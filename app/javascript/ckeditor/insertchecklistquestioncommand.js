@@ -2,7 +2,6 @@ import Command from '@ckeditor/ckeditor5-core/src/command';
 
 export default class InsertChecklistQuestionCommand extends Command {
     execute( id ) {
-            alert('make sure this goes when you insert question');
         this.editor.model.change( writer => {
             // Insert <checklistQuestion id="...">*</checklistQuestion> at the current selection position
             // in a way which will result in creating a valid model structure.
@@ -16,8 +15,6 @@ export default class InsertChecklistQuestionCommand extends Command {
         const allowedIn = model.schema.findAllowedParent( selection.getFirstPosition(), 'checklistQuestion' );
 
         this.isEnabled = allowedIn !== null;
-        console.log('--------insertchecklistquestioncommand refresh');
-        console.log(this.isEnabled);
     }
 }
 
@@ -33,6 +30,7 @@ function createChecklistQuestion( writer, id ) {
     const answer = writer.createElement( 'answer' );
     const answerTitle = writer.createElement( 'answerTitle' );
     const answerText = writer.createElement( 'answerText' );
+    const answerParagraph = writer.createElement( 'paragraph' );
 
     writer.append( question, checklistQuestion );
     writer.append( questionTitle, question );
@@ -44,10 +42,14 @@ function createChecklistQuestion( writer, id ) {
     writer.append( answer, checklistQuestion );
     writer.append( answerTitle, answer );
     writer.append( answerText, answer );
+    writer.append( answerParagraph, answerText );
 
     // There must be at least one paragraph for the description to be editable.
     // See https://github.com/ckeditor/ckeditor5/issues/1464.
-    writer.appendElement( 'paragraph', answerText );
+    writer.insertText( 'Question?', questionTitle );
+    writer.insertText( 'Option 1', checkboxLabel );
+    writer.insertText( 'Answer Title', answerTitle );
+    writer.insertText( 'Answer body', answerParagraph );
 
     return checklistQuestion;
 }

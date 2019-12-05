@@ -160,19 +160,6 @@ export default class ChecklistQuestionEditing extends Plugin {
         const conversion = editor.conversion;
         const { editing, data, model } = editor;
 
-        data.downcastDispatcher.on( 'attribute', (one, two, three, four)=>{
-            console.log('attribute>>>>>>>>>>>');
-            console.log(one, two, three, four);
-            console.log('attribute<<<<<<<<<<<');
-        }, { priority: 'high' } );
-        editing.view.document.on( 'enter', (one, two, three, four)=>{
-            console.log('enter>>>>>>>>>>>');
-            console.log(one, two, three, four);
-            console.log('enter<<<<<<<<<<<');
-        }, { priority: 'high' } );
-        data.downcastDispatcher.on( '', ()=>{alert('here444');}, { priority: 'high' } );
-        window.data = data;
-
         /*
         editor.commands.get( 'enter' ).on( 'execute', (evt, data, three, four) => {
 	    const positionParent = editor.model.document.selection.getLastPosition().parent;
@@ -320,7 +307,8 @@ const fieldset = positionParent.parent.parent;
             model: 'questionTitle',
             view: ( modelElement, viewWriter ) => {
                 // Note: You use a more specialized createEditableElement() method here.
-                const h5 = viewWriter.createEditableElement( 'h5', {} );
+                const h5 = viewWriter.createEditableElement( 'h5', {
+                } );
 
                 return toWidgetEditable( h5, viewWriter );
             }
@@ -350,12 +338,7 @@ const fieldset = positionParent.parent.parent;
 
         // <questionFieldset> converters
         conversion.for( 'upcast' ).elementToElement( {
-            //model: 'questionFieldset',
-            model: ( viewElement, modelWriter ) => {
-                MODEL_WRITER = modelWriter;
-
-                return modelWriter.createElement( 'questionFieldset' );
-            },
+            model: 'questionFieldset',
             view: {
                 name: 'fieldset'
             }
@@ -370,7 +353,6 @@ const fieldset = positionParent.parent.parent;
             model: 'questionFieldset',
             view: ( modelElement, viewWriter ) => {
                 const fieldset = viewWriter.createContainerElement( 'fieldset' );
-                FIELDSET = fieldset;
 
                 return toWidget( fieldset, viewWriter );
             }
@@ -384,17 +366,38 @@ const fieldset = positionParent.parent.parent;
             }
 
         } );
-        /*conversion.for( 'dataDowncast' ).elementToElement( {
-            model: 'checkbox',
+        conversion.for( 'dataDowncast' ).elementToElement( {
+            model: 'checkboxDiv',
             view: {
                 name: 'div'
             }
-        } );*/
-        conversion.for( 'downcast' ).elementToElement( {
+        } );
+        conversion.for( 'editingDowncast' ).elementToElement( {
             model: 'checkboxDiv',
             view: ( modelElement, viewWriter ) => {
                 // Note: You use a more specialized createEditableElement() method here.
                 const div = viewWriter.createEditableElement( 'div', {} );
+
+
+		const widgetContents = viewWriter.createUIElement(
+			'select',
+			null,
+			function( domDocument ) {
+				const domElement = this.toDomElement( domDocument );
+				const correctness = modelElement.getAttribute( 'data-correctness' );
+				domElement.innerHTML = `<select name="test">
+    <option value="correct">Correct</option>
+    <option value="incorrect">Incorrect</option>
+    <option value="maybe">Maybe</option></select>`;
+				return domElement;
+			} );
+
+		const insertPosition = viewWriter.createPositionAt( div, 0 );
+		viewWriter.insert( insertPosition, widgetContents );
+
+
+
+
                 return toWidgetEditable( div, viewWriter );
             }
         } );
@@ -403,11 +406,20 @@ const fieldset = positionParent.parent.parent;
         conversion.for( 'upcast' ).elementToElement( {
             model: 'checkboxInput',
             view: {
-                name: 'input'
+                name: 'input',
+                type: 'checkbox'
             }
 
         } );
-        conversion.for( 'downcast' ).elementToElement( {
+        conversion.for( 'dataDowncast' ).elementToElement( {
+            model: 'checkboxInput',
+            view: ( modelElement, viewWriter ) => {
+                // Note: You use a more specialized createEditableElement() method here.
+                const input = viewWriter.createEmptyElement( 'input', {'type': 'checkbox'} );
+                return input;
+            }
+        } );
+        conversion.for( 'editingDowncast' ).elementToElement( {
             model: 'checkboxInput',
             view: ( modelElement, viewWriter ) => {
                 // Note: You use a more specialized createEditableElement() method here.
@@ -424,19 +436,17 @@ const fieldset = positionParent.parent.parent;
             }
 
         } );
-        conversion.for( 'downcast' ).elementToElement( {
+        conversion.for( 'dataDowncast' ).elementToElement( {
+            model: 'checkboxLabel',
+            view: {
+                name: 'label'
+            }
+        } );
+        conversion.for( 'editingDowncast' ).elementToElement( {
             model: 'checkboxLabel',
             view: ( modelElement, viewWriter ) => {
-                console.log(modelElement);
-                console.log(viewWriter);
                 // Note: You use a more specialized createEditableElement() method here.
                 const label = viewWriter.createEditableElement( 'label', {} );
-                //label.on( 'change:data', 'insertCheckbox' );
-                //modelElement.document.on( 'enter', ()=>{console.log('oiudhfaoidufhaidufhaihfiauhdfiauhfakohfd');} );
-                VIEW_WRITER = viewWriter;
-                //viewWriter.document.on( 'enter', dosomething);
-                console.log(label);
-                //console.log(label.parent);
 
                 return toWidgetEditable( label, viewWriter );
             }
@@ -513,25 +523,4 @@ const fieldset = positionParent.parent.parent;
         } );
 
     }
-}
-
-var VIEW_WRITER;
-var MODEL_WRITER;
-var FIELDSET;
-function dosomething( evt, data, api ) {
-        console.log("===========================");
-        console.log(MODEL_WRITER, evt, data);
-
-
-    const checkboxDiv = MODEL_WRITER.createContainerElement( 'checkboxDiv' );
-    const checkboxInput = MODEL_WRITER.createEmptyElement( 'checkboxInput' );
-    const checkboxLabel = MODEL_WRITER.createEditableElement( 'checkboxLabel' );
-
-    MODEL_WRITER.insert( MODEL_WRITER.createPositionAt( FIELDSET, 0 ), checkboxDiv );
-
-    /*
-    VIEW_WRITER.append( checkboxDiv, questionFieldset );
-    VIEW_WRITER.append( checkboxInput, checkboxDiv );
-    VIEW_WRITER.append( checkboxLabel, checkboxDiv );
-    */
 }
