@@ -299,6 +299,15 @@ class ContentEditor extends Component {
                                             }}
                                             {...{name: 'Checklist Question', id: Math.floor(Math.random() * 1e16)}}
                                         />
+                                        <ContentPartPreview
+                                            id="3"
+                                            key="3"
+                                            onClick={( id ) => {
+                                                this.editor.execute( 'insertCheckbox', id );
+                                                this.editor.editing.view.focus();
+                                            }}
+                                            {...{name: 'Checkbox', id: Math.floor(Math.random() * 1e16)}}
+                                        />
                                     </ul>
                                 </div>
                             </TabPanel>

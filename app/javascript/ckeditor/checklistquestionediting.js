@@ -81,9 +81,10 @@ export default class ChecklistQuestionEditing extends Plugin {
 
         schema.register( 'checkboxDiv', {
             // Cannot be split or left by the caret.
-            isLimit: true,
+            //isLimit: true,
 
             allowIn: 'questionFieldset',
+            //allowIn: 'section',
 
             // Allow content which is allowed in blocks (i.e. text with attributes).
             allowContentOf: '$root',
@@ -157,6 +158,67 @@ export default class ChecklistQuestionEditing extends Plugin {
     _defineConverters() {
         const editor = this.editor;
         const conversion = editor.conversion;
+        const { editing, data, model } = editor;
+
+        data.downcastDispatcher.on( 'attribute', (one, two, three, four)=>{
+            console.log('attribute>>>>>>>>>>>');
+            console.log(one, two, three, four);
+            console.log('attribute<<<<<<<<<<<');
+        }, { priority: 'high' } );
+        editing.view.document.on( 'enter', (one, two, three, four)=>{
+            console.log('enter>>>>>>>>>>>');
+            console.log(one, two, three, four);
+            console.log('enter<<<<<<<<<<<');
+        }, { priority: 'high' } );
+        data.downcastDispatcher.on( '', ()=>{alert('here444');}, { priority: 'high' } );
+        window.data = data;
+
+        /*
+        editor.commands.get( 'enter' ).on( 'execute', (evt, data, three, four) => {
+	    const positionParent = editor.model.document.selection.getLastPosition().parent;
+	    if ( positionParent.name == 'checkboxLabel' ) {
+                editor.model.change( writer => {
+                        console.log('enter>>>>>>>>>>>');
+                        console.log(writer, positionParent);
+                        console.log(evt, data, three, four);
+                        console.log('enter<<<<<<<<<<<');
+                        //alert('omg');
+
+                        editor.execute( 'insertCheckbox')
+
+const fieldset = positionParent.parent.parent;
+
+
+    const checkboxDiv = writer.createElement( 'checkboxDiv' );
+    const checkboxInput = writer.createElement( 'checkboxInput' );
+    const checkboxLabel = writer.createElement( 'checkboxLabel' );
+
+    writer.append( checkboxInput, checkboxDiv );
+    writer.append( checkboxLabel, checkboxDiv );
+
+    //writer.insert( writer.createPositionAt( fieldset, 0 ), checkboxDiv );
+
+    console.log(data);
+				data.preventDefault();
+				evt.stop();
+                });
+            }
+        });
+        */
+        		this.listenTo( editing.view.document, 'enter', ( evt, data ) => {
+			const doc = this.editor.model.document;
+			const positionParent = doc.selection.getLastPosition().parent;
+	                        if ( positionParent.name == 'checkboxLabel' ) {
+			            alert('here');
+                                    editor.execute( 'insertCheckbox')
+
+				    data.preventDefault();
+				    evt.stop();
+	                	}
+			});
+
+
+
 
         // <checklistQuestion> converters ((data) view → model)
         conversion.for( 'upcast' ).elementToElement( {
@@ -370,9 +432,9 @@ export default class ChecklistQuestionEditing extends Plugin {
                 // Note: You use a more specialized createEditableElement() method here.
                 const label = viewWriter.createEditableElement( 'label', {} );
                 //label.on( 'change:data', 'insertCheckbox' );
-                modelElement.document.on( 'enter', ()=>{console.log('oiudhfaoidufhaidufhaihfiauhdfiauhfakohfd');} );
+                //modelElement.document.on( 'enter', ()=>{console.log('oiudhfaoidufhaidufhaihfiauhdfiauhfakohfd');} );
                 VIEW_WRITER = viewWriter;
-                viewWriter.document.on( 'enter', dosomething);
+                //viewWriter.document.on( 'enter', dosomething);
                 console.log(label);
                 //console.log(label.parent);
 

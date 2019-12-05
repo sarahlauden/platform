@@ -2,6 +2,7 @@ import Command from '@ckeditor/ckeditor5-core/src/command';
 
 export default class InsertChecklistQuestionCommand extends Command {
     execute( id ) {
+            alert('make sure this goes when you insert question');
         this.editor.model.change( writer => {
             // Insert <checklistQuestion id="...">*</checklistQuestion> at the current selection position
             // in a way which will result in creating a valid model structure.
@@ -15,6 +16,8 @@ export default class InsertChecklistQuestionCommand extends Command {
         const allowedIn = model.schema.findAllowedParent( selection.getFirstPosition(), 'checklistQuestion' );
 
         this.isEnabled = allowedIn !== null;
+        console.log('--------insertchecklistquestioncommand refresh');
+        console.log(this.isEnabled);
     }
 }
 
