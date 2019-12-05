@@ -42,7 +42,6 @@ import UploadAdapter from '@ckeditor/ckeditor5-adapter-ckfinder/src/uploadadapte
 import ContentPartPreviewEditing from '../ckeditor/contentpartpreviewediting';
 import ChecklistQuestionEditing from '../ckeditor/checklistquestionediting';
 import SectionEditing from '../ckeditor/sectionediting';
-import TodoList from '../ckeditor/todolist';
 
 // React components to render the list of content parts and the content part preview.
 import ContentPartList from './ContentPartList';
@@ -68,7 +67,6 @@ BalloonEditor.builtinPlugins = [
     Italic,
     Link,
     List,
-    TodoList,
     MediaEmbed,
     Paragraph,
     PasteFromOffice,
@@ -88,7 +86,6 @@ BalloonEditor.defaultConfig = {
         '|',
         'bulletedList',
         'numberedList',
-        'todoList',
         '|',
         'indent',
         'outdent',
@@ -110,7 +107,6 @@ BalloonEditor.defaultConfig = {
             'link',
             'bulletedList',
             'numberedList',
-            'todoList',
             '|',
             'indent',
             'outdent',
@@ -303,10 +299,10 @@ class ContentEditor extends Component {
                                             id="3"
                                             key="3"
                                             onClick={( id ) => {
-                                                this.editor.execute( 'insertCheckbox', id );
+                                                this.editor.execute( 'insertImage', id );
                                                 this.editor.editing.view.focus();
                                             }}
-                                            {...{name: 'Checkbox', id: Math.floor(Math.random() * 1e16)}}
+                                            {...{name: 'Image', id: Math.floor(Math.random() * 1e16)}}
                                         />
                                     </ul>
                                 </div>
