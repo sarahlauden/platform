@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_14_183555) do
+ActiveRecord::Schema.define(version: 2019_11_25_140958) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -95,6 +95,14 @@ ActiveRecord::Schema.define(version: 2019_11_14_183555) do
     t.index ["name"], name: "index_locations_on_name", unique: true
   end
 
+  create_table "login_tickets", force: :cascade do |t|
+    t.string "ticket", null: false
+    t.datetime "created_on", null: false
+    t.datetime "created_at", null: false
+    t.datetime "consumed"
+    t.string "client_hostname", null: false
+  end
+
   create_table "majors", force: :cascade do |t|
     t.string "name"
     t.integer "parent_id"
@@ -153,11 +161,43 @@ ActiveRecord::Schema.define(version: 2019_11_14_183555) do
     t.index ["name"], name: "index_programs_on_name", unique: true
   end
 
+  create_table "proxy_granting_tickets", force: :cascade do |t|
+    t.string "ticket", null: false
+    t.datetime "created_on", null: false
+    t.datetime "created_at", null: false
+    t.string "client_hostname", null: false
+    t.string "iou", null: false
+    t.bigint "service_ticket_id"
+    t.index ["service_ticket_id"], name: "index_proxy_granting_tickets_on_service_ticket_id"
+  end
+
   create_table "roles", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_roles_on_name", unique: true
+  end
+
+  create_table "service_tickets", force: :cascade do |t|
+    t.string "ticket", null: false
+    t.string "service", null: false
+    t.datetime "created_on", null: false
+    t.datetime "created_at", null: false
+    t.datetime "consumed"
+    t.string "client_hostname", null: false
+    t.string "username", null: false
+    t.integer "proxy_granting_ticket_id"
+    t.integer "ticket_granting_ticket_id"
+  end
+
+  create_table "ticket_granting_tickets", force: :cascade do |t|
+    t.string "ticket", null: false
+    t.datetime "created_on", null: false
+    t.datetime "created_at", null: false
+    t.string "client_hostname", null: false
+    t.string "username", null: false
+    t.string "remember_me", null: false
+    t.string "extra_attributes", null: false
   end
 
   create_table "users", force: :cascade do |t|

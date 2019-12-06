@@ -1,11 +1,15 @@
+require 'rubycas-server-core/tickets'
+
 class ApplicationController < ActionController::Base
+  include RubyCAS::Server::Core::Tickets
+
   before_action :authenticate_user!
   before_action :ensure_admin!
 
   private
   
   def authenticate_user!
-    super unless authorized_by_token?
+    super unless authorized_by_token? || cas_ticket?
   end
   
   def ensure_admin!
@@ -21,5 +25,12 @@ class ApplicationController < ActionController::Base
     return false if key.nil?
     
     !!AccessToken.find_by(key: key)
+  end
+
+  def cas_ticket?
+    ticket = params[:ticket]
+    return false if ticket.nil?
+
+    ServiceTicket.exists?(ticket: ticket)
   end
 end

@@ -47,6 +47,9 @@ group :development do
   gem 'guard-bundler', require: false
   gem 'guard-yarn', require: false
   gem 'guard-migrate', require: false
+  gem 'pry-rescue'
+  gem 'pry-stack_explorer'
+  gem 'rubocop'
 end
 
 group :test do
@@ -60,6 +63,12 @@ group :test do
 
   # Report test coverage
   gem 'codacy-coverage'
+
+  # Clean database after tests
+  gem 'database_cleaner'
+
+  # Stores mocks in reusable file
+  gem 'vcr'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
