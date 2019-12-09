@@ -1,10 +1,10 @@
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import { toWidget, toWidgetEditable } from '@ckeditor/ckeditor5-widget/src/utils';
 import Widget from '@ckeditor/ckeditor5-widget/src/widget';
-import InsertChecklistQuestionCommand from './insertchecklistquestioncommand';
-import InsertCheckboxCommand from './insertcheckboxcommand';
+import InsertRadioQuestionCommand from './insertradioquestioncommand';
+import InsertRadioCommand from './insertradiocommand';
 
-export default class ChecklistQuestionEditing extends Plugin {
+export default class RadioQuestionEditing extends Plugin {
     static get requires() {
         return [ Widget ];
     }
@@ -13,14 +13,14 @@ export default class ChecklistQuestionEditing extends Plugin {
         this._defineSchema();
         this._defineConverters();
 
-        this.editor.commands.add( 'insertChecklistQuestion', new InsertChecklistQuestionCommand( this.editor ) );
-        this.editor.commands.add( 'insertCheckbox', new InsertCheckboxCommand( this.editor ) );
+        this.editor.commands.add( 'insertRadioQuestion', new InsertRadioQuestionCommand( this.editor ) );
+        this.editor.commands.add( 'insertRadio', new InsertRadioCommand( this.editor ) );
     }
 
     _defineSchema() {
         const schema = this.editor.model.schema;
 
-        schema.register( 'checklistQuestion', {
+        schema.register( 'radioQuestion', {
             // Behaves like a self-contained object (e.g. an image).
             isObject: true,
 
@@ -28,74 +28,74 @@ export default class ChecklistQuestionEditing extends Plugin {
             allowIn: 'section',
 
             // Each content part preview has an ID. A unique ID tells the application which
-            // checklist-question it represents and makes it possible to render it inside a widget.
+            // radio-question it represents and makes it possible to render it inside a widget.
             allowAttributes: [ 'id' ]
         } );
 
-        schema.register( 'question', {
+        schema.register( 'rqQuestion', {
             // Behaves like a self-contained object (e.g. an image).
             isObject: true,
 
-            allowIn: 'checklistQuestion',
+            allowIn: 'radioQuestion',
         } );
 
-        schema.register( 'questionTitle', {
+        schema.register( 'rqQuestionTitle', {
             // Cannot be split or left by the caret.
             isLimit: true,
 
-            allowIn: 'question',
+            allowIn: 'rqQuestion',
 
             // Allow content which is allowed in blocks (i.e. text with attributes).
             allowContentOf: '$block'
         } );
 
-        schema.register( 'questionForm', {
+        schema.register( 'rqQuestionForm', {
             // Cannot be split or left by the caret.
             isLimit: true,
 
-            allowIn: 'question',
+            allowIn: 'rqQuestion',
 
             // Allow content which is allowed in the root (e.g. paragraphs).
-            allowContentOf: ['questionFieldset'],
+            allowContentOf: ['rqQuestionFieldset'],
         } );
 
-        schema.register( 'questionFieldset', {
+        schema.register( 'rqQuestionFieldset', {
             // Cannot be split or left by the caret.
             isLimit: true,
 
-            allowIn: 'questionForm',
+            allowIn: 'rqQuestionForm',
 
             // Allow content which is allowed in the root (e.g. paragraphs).
-            //allowContentOf: ['questionLegend', 'checkbox'],
+            //allowContentOf: ['rqQuestionLegend', 'radio'],
         } );
 
-        schema.register( 'questionLegend', {
+        schema.register( 'rqQuestionLegend', {
             // Cannot be split or left by the caret.
             isLimit: true,
 
-            allowIn: 'questionFieldset',
+            allowIn: 'rqQuestionFieldset',
 
             // Allow content which is allowed in blocks (i.e. text with attributes).
             allowContentOf: '$block'
         } );
 
-        schema.register( 'checkboxDiv', {
+        schema.register( 'radioDiv', {
             // Cannot be split or left by the caret.
             //isLimit: true,
 
-            allowIn: 'questionFieldset',
+            allowIn: 'rqQuestionFieldset',
             //allowIn: 'section',
 
             // Allow content which is allowed in blocks (i.e. text with attributes).
             allowContentOf: '$root',
         } );
 
-        schema.register( 'checkboxInput', {
+        schema.register( 'radioInput', {
             // Cannot be split or left by the caret.
             //isLimit: true,
             isInline: true,
 
-            allowIn: 'checkboxDiv',
+            allowIn: 'radioDiv',
 
             // Allow content which is allowed in blocks (i.e. text with attributes).
             //allowContentOf: '$block',
@@ -103,12 +103,12 @@ export default class ChecklistQuestionEditing extends Plugin {
             allowAttributes: [ 'id', 'name', 'value' ]
         } );
 
-        schema.register( 'checkboxLabel', {
+        schema.register( 'radioLabel', {
             // Cannot be split or left by the caret.
             //isLimit: true,
             isInline: true,
 
-            allowIn: 'checkboxDiv',
+            allowIn: 'radioDiv',
 
             // Allow content which is allowed in blocks (i.e. text with attributes).
             allowContentOf: '$block',
@@ -116,28 +116,28 @@ export default class ChecklistQuestionEditing extends Plugin {
             allowAttributes: [ 'for' ]
         } );
 
-        schema.register( 'answer', {
+        schema.register( 'rqAnswer', {
             // Behaves like a self-contained object (e.g. an image).
             isObject: true,
 
-            allowIn: 'checklistQuestion'
+            allowIn: 'radioQuestion'
         } );
 
-        schema.register( 'answerTitle', {
+        schema.register( 'rqAnswerTitle', {
             // Cannot be split or left by the caret.
             isLimit: true,
 
-            allowIn: 'answer',
+            allowIn: 'rqAnswer',
 
             // Allow content which is allowed in blocks (i.e. text with attributes).
             allowContentOf: '$block'
         } );
 
-        schema.register( 'answerText', {
+        schema.register( 'rqAnswerText', {
             // Cannot be split or left by the caret.
             isLimit: true,
 
-            allowIn: 'answer',
+            allowIn: 'rqAnswer',
 
             // Allow content which is allowed in the root (e.g. paragraphs).
             allowContentOf: '$root'
@@ -149,7 +149,7 @@ export default class ChecklistQuestionEditing extends Plugin {
 
             // If checkChild() is called with a context that ends with blockQuote and blockQuote as a child
             // to check, make the checkChild() method return false.
-            if ( context.endsWith( 'answerText' ) && childDefinition.name == 'checklistQuestion' ) {
+            if ( context.endsWith( 'rqAnswerText' ) && childDefinition.name == 'radioQuestion' ) {
                 return false;
             }
         } );
@@ -160,80 +160,117 @@ export default class ChecklistQuestionEditing extends Plugin {
         const conversion = editor.conversion;
         const { editing, data, model } = editor;
 
-        // FIXME: this should go somewhere else
-        this.listenTo( editing.view.document, 'enter', ( evt, data ) => {
-            const doc = this.editor.model.document;
-            const positionParent = doc.selection.getLastPosition().parent;
-            if ( positionParent.name == 'checkboxLabel' ) {
-                editor.execute( 'insertCheckbox' )
-                data.preventDefault();
-                evt.stop();
+        /*
+        editor.commands.get( 'enter' ).on( 'execute', (evt, data, three, four) => {
+	    const positionParent = editor.model.document.selection.getLastPosition().parent;
+	    if ( positionParent.name == 'radioLabel' ) {
+                editor.model.change( writer => {
+                        console.log('enter>>>>>>>>>>>');
+                        console.log(writer, positionParent);
+                        console.log(evt, data, three, four);
+                        console.log('enter<<<<<<<<<<<');
+                        //alert('omg');
+
+                        editor.execute( 'insertRadio')
+
+const fieldset = positionParent.parent.parent;
+
+
+    const radioDiv = writer.createElement( 'radioDiv' );
+    const radioInput = writer.createElement( 'radioInput' );
+    const radioLabel = writer.createElement( 'radioLabel' );
+
+    writer.append( radioInput, radioDiv );
+    writer.append( radioLabel, radioDiv );
+
+    //writer.insert( writer.createPositionAt( fieldset, 0 ), radioDiv );
+
+    console.log(data);
+				data.preventDefault();
+				evt.stop();
+                });
             }
         });
+        */
+        		this.listenTo( editing.view.document, 'enter', ( evt, data ) => {
+			const doc = this.editor.model.document;
+			const positionParent = doc.selection.getLastPosition().parent;
+	                        if ( positionParent.name == 'radioLabel' ) {
+			            alert('here');
+                                    editor.execute( 'insertRadio')
 
-        // <checklistQuestion> converters ((data) view → model)
+				    data.preventDefault();
+				    evt.stop();
+	                	}
+			});
+
+
+
+
+        // <radioQuestion> converters ((data) view → model)
         conversion.for( 'upcast' ).elementToElement( {
             view: {
                 name: 'div',
-                classes: ['module-block', 'module-block-checkbox']
+                classes: ['module-block', 'module-block-radio']
             },
             model: ( viewElement, modelWriter ) => {
                 // Read the "data-id" attribute from the view and set it as the "id" in the model.
                 console.log(" up");
-                return modelWriter.createElement( 'checklistQuestion', {
+                return modelWriter.createElement( 'radioQuestion', {
                     id: parseInt( viewElement.getAttribute( 'data-id' ) )
                 } );
             }
         } );
 
-        // <checklistQuestion> converters (model → data view)
+        // <radioQuestion> converters (model → data view)
         conversion.for( 'dataDowncast' ).elementToElement( {
-            model: 'checklistQuestion',
+            model: 'radioQuestion',
             view: ( modelElement, viewWriter ) => {
                 console.log("data down");
                 return viewWriter.createEditableElement( 'div', {
-                    class: 'module-block module-block-checkbox',
+                    class: 'module-block module-block-radio',
                     'data-id': modelElement.getAttribute( 'id' )
                 } );
             }
         } );
 
-        // <checklistQuestion> converters (model → editing view)
+        // <radioQuestion> converters (model → editing view)
         conversion.for( 'editingDowncast' ).elementToElement( {
-            model: 'checklistQuestion',
+            model: 'radioQuestion',
             view: ( modelElement, viewWriter ) => {
                 const id = modelElement.getAttribute( 'id' );
                 console.log("ed down");
 
-                // The outermost <section class="checklist-question" data-id="..."></section> element.
-                const checklistQuestion = viewWriter.createContainerElement( 'div', {
-                    class: 'module-block module-block-checkbox',
+                const radioQuestion = viewWriter.createContainerElement( 'div', {
+                    class: 'module-block module-block-radio',
                     'data-id': id
                 } );
 
-                return toWidget( checklistQuestion, viewWriter, { label: 'checklist-question widget' } );
+                //viewWriter.insert( viewWriter.createPositionAt( radioQuestion, 0 ), question );
+
+                return toWidget( radioQuestion, viewWriter, { label: 'radio-question widget' } );
             }
         } );
 
         // <question> converters
         conversion.for( 'upcast' ).elementToElement( {
-            model: 'question',
+            model: 'rqQuestion',
             view: {
                 name: 'div',
-                classes: 'question'
+                classes: 'rqQuestion'
             }
         } );
         conversion.for( 'dataDowncast' ).elementToElement( {
-            model: 'question',
+            model: 'rqQuestion',
             view: {
                 name: 'div',
-                classes: 'question'
+                classes: 'rqQuestion'
             }
         } );
         conversion.for( 'editingDowncast' ).elementToElement( {
-            model: 'question',
+            model: 'rqQuestion',
             view: ( modelElement, viewWriter ) => {
-                const section = viewWriter.createContainerElement( 'div', { class: 'question' } );
+                const section = viewWriter.createContainerElement( 'div', { class: 'rqQuestion' } );
 
                 return toWidget( section, viewWriter );
             }
@@ -241,20 +278,21 @@ export default class ChecklistQuestionEditing extends Plugin {
 
         // <questionTitle> converters
         conversion.for( 'upcast' ).elementToElement( {
-            model: 'questionTitle',
+            model: 'rqQuestionTitle',
             view: {
                 name: 'h5'
             }
         } );
         conversion.for( 'dataDowncast' ).elementToElement( {
-            model: 'questionTitle',
+            model: 'rqQuestionTitle',
             view: {
                 name: 'h5'
             }
         } );
         conversion.for( 'editingDowncast' ).elementToElement( {
-            model: 'questionTitle',
+            model: 'rqQuestionTitle',
             view: ( modelElement, viewWriter ) => {
+                // Note: You use a more specialized createEditableElement() method here.
                 const h5 = viewWriter.createEditableElement( 'h5', {
                 } );
 
@@ -264,19 +302,19 @@ export default class ChecklistQuestionEditing extends Plugin {
 
         // <questionForm> converters
         conversion.for( 'upcast' ).elementToElement( {
-            model: 'questionForm',
+            model: 'rqQuestionForm',
             view: {
                 name: 'form'
             }
         } );
         conversion.for( 'dataDowncast' ).elementToElement( {
-            model: 'questionForm',
+            model: 'rqQuestionForm',
             view: {
                 name: 'form'
             }
         } );
         conversion.for( 'editingDowncast' ).elementToElement( {
-            model: 'questionForm',
+            model: 'rqQuestionForm',
             view: ( modelElement, viewWriter ) => {
                 const form = viewWriter.createContainerElement( 'form' );
 
@@ -286,19 +324,19 @@ export default class ChecklistQuestionEditing extends Plugin {
 
         // <questionFieldset> converters
         conversion.for( 'upcast' ).elementToElement( {
-            model: 'questionFieldset',
+            model: 'rqQuestionFieldset',
             view: {
                 name: 'fieldset'
             }
         } );
         conversion.for( 'dataDowncast' ).elementToElement( {
-            model: 'questionFieldset',
+            model: 'rqQuestionFieldset',
             view: {
                 name: 'fieldset'
             }
         } );
         conversion.for( 'editingDowncast' ).elementToElement( {
-            model: 'questionFieldset',
+            model: 'rqQuestionFieldset',
             view: ( modelElement, viewWriter ) => {
                 const fieldset = viewWriter.createContainerElement( 'fieldset' );
 
@@ -306,90 +344,94 @@ export default class ChecklistQuestionEditing extends Plugin {
             }
         } );
 
-        // <checkboxDiv> converters
+        // <radioDiv> converters
         conversion.for( 'upcast' ).elementToElement( {
-            model: 'checkboxDiv',
+            model: 'radioDiv',
             view: {
                 name: 'div'
             }
 
         } );
         conversion.for( 'dataDowncast' ).elementToElement( {
-            model: 'checkboxDiv',
+            model: 'radioDiv',
             view: {
                 name: 'div'
             }
         } );
         conversion.for( 'editingDowncast' ).elementToElement( {
-            model: 'checkboxDiv',
+            model: 'radioDiv',
             view: ( modelElement, viewWriter ) => {
+                // Note: You use a more specialized createEditableElement() method here.
                 const div = viewWriter.createEditableElement( 'div', {} );
 
-                const widgetContents = viewWriter.createUIElement(
-                    'select',
-                    {
-                        'name': 'test',
-                        'onchange': 'localStorage.setItem(`select[${this.name}]`, this.value)'
-                    },
-                    function( domDocument ) {
-                    console.log(this);
-                        const domElement = this.toDomElement( domDocument );
-                        domElement.innerHTML = `
-                            <option value="correct">Correct</option>
-                            <option value="incorrect">Incorrect</option>
-                            <option value="maybe">Maybe</option>`;
-                        domElement.value = modelElement.getAttribute( 'data-correctness' );
-                        return domElement;
-                    } );
 
-                const insertPosition = viewWriter.createPositionAt( div, 0 );
-                viewWriter.insert( insertPosition, widgetContents );
+		const widgetContents = viewWriter.createUIElement(
+			'select',
+			null,
+			function( domDocument ) {
+				const domElement = this.toDomElement( domDocument );
+				const correctness = modelElement.getAttribute( 'data-correctness' );
+				domElement.innerHTML = `<select name="test">
+    <option value="correct">Correct</option>
+    <option value="incorrect">Incorrect</option>
+    <option value="maybe">Maybe</option></select>`;
+				return domElement;
+			} );
+
+		const insertPosition = viewWriter.createPositionAt( div, 0 );
+		viewWriter.insert( insertPosition, widgetContents );
+
+
+
 
                 return toWidgetEditable( div, viewWriter );
             }
         } );
 
-        // <checkbox> converters
+        // <radio> converters
         conversion.for( 'upcast' ).elementToElement( {
-            model: 'checkboxInput',
+            model: 'radioInput',
             view: {
                 name: 'input',
-                type: 'checkbox'
+                type: 'radio'
             }
 
         } );
         conversion.for( 'dataDowncast' ).elementToElement( {
-            model: 'checkboxInput',
+            model: 'radioInput',
             view: ( modelElement, viewWriter ) => {
-                const input = viewWriter.createEmptyElement( 'input', {'type': 'checkbox'} );
+                // Note: You use a more specialized createEditableElement() method here.
+                const input = viewWriter.createEmptyElement( 'input', {'type': 'radio'} );
                 return input;
             }
         } );
         conversion.for( 'editingDowncast' ).elementToElement( {
-            model: 'checkboxInput',
+            model: 'radioInput',
             view: ( modelElement, viewWriter ) => {
-                const input = viewWriter.createEmptyElement( 'input', {'type': 'checkbox'} );
+                // Note: You use a more specialized createEditableElement() method here.
+                const input = viewWriter.createEmptyElement( 'input', {'type': 'radio'} );
                 return toWidget( input, viewWriter );
             }
         } );
 
-        // <checkbox> converters
+        // <radio> converters
         conversion.for( 'upcast' ).elementToElement( {
-            model: 'checkboxLabel',
+            model: 'radioLabel',
             view: {
                 name: 'label'
             }
 
         } );
         conversion.for( 'dataDowncast' ).elementToElement( {
-            model: 'checkboxLabel',
+            model: 'radioLabel',
             view: {
                 name: 'label'
             }
         } );
         conversion.for( 'editingDowncast' ).elementToElement( {
-            model: 'checkboxLabel',
+            model: 'radioLabel',
             view: ( modelElement, viewWriter ) => {
+                // Note: You use a more specialized createEditableElement() method here.
                 const label = viewWriter.createEditableElement( 'label', {} );
 
                 return toWidgetEditable( label, viewWriter );
@@ -398,23 +440,23 @@ export default class ChecklistQuestionEditing extends Plugin {
 
         // <answer> converters
         conversion.for( 'upcast' ).elementToElement( {
-            model: 'answer',
+            model: 'rqAnswer',
             view: {
                 name: 'div',
-                classes: 'answer'
+                classes: 'rqAnswer'
             }
         } );
         conversion.for( 'dataDowncast' ).elementToElement( {
-            model: 'answer',
+            model: 'rqAnswer',
             view: {
                 name: 'div',
-                classes: 'answer'
+                classes: 'rqAnswer'
             }
         } );
         conversion.for( 'editingDowncast' ).elementToElement( {
-            model: 'answer',
+            model: 'rqAnswer',
             view: ( modelElement, viewWriter ) => {
-                const section = viewWriter.createContainerElement( 'div', { class: 'answer' } );
+                const section = viewWriter.createContainerElement( 'div', { class: 'rqAnswer' } );
 
                 return toWidget( section, viewWriter );
             }
@@ -422,20 +464,21 @@ export default class ChecklistQuestionEditing extends Plugin {
 
         // <answerTitle> converters
         conversion.for( 'upcast' ).elementToElement( {
-            model: 'answerTitle',
+            model: 'rqAnswerTitle',
             view: {
                 name: 'h5'
             }
         } );
         conversion.for( 'dataDowncast' ).elementToElement( {
-            model: 'answerTitle',
+            model: 'rqAnswerTitle',
             view: {
                 name: 'h5'
             }
         } );
         conversion.for( 'editingDowncast' ).elementToElement( {
-            model: 'answerTitle',
+            model: 'rqAnswerTitle',
             view: ( modelElement, viewWriter ) => {
+                // Note: You use a more specialized createEditableElement() method here.
                 const h5 = viewWriter.createEditableElement( 'h5', {} );
 
                 return toWidgetEditable( h5, viewWriter );
@@ -444,20 +487,21 @@ export default class ChecklistQuestionEditing extends Plugin {
 
         // <answerText> converters
         conversion.for( 'upcast' ).elementToElement( {
-            model: 'answerText',
+            model: 'rqAnswerText',
             view: {
                 name: 'div'
             }
         } );
         conversion.for( 'dataDowncast' ).elementToElement( {
-            model: 'answerText',
+            model: 'rqAnswerText',
             view: {
                 name: 'div'
             }
         } );
         conversion.for( 'editingDowncast' ).elementToElement( {
-            model: 'answerText',
+            model: 'rqAnswerText',
             view: ( modelElement, viewWriter ) => {
+                // Note: You use a more specialized createEditableElement() method here.
                 const div = viewWriter.createEditableElement( 'div', {} );
 
                 return toWidgetEditable( div, viewWriter );
