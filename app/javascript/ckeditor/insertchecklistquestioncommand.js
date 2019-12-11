@@ -19,7 +19,7 @@ export default class InsertChecklistQuestionCommand extends Command {
 }
 
 function createChecklistQuestion( writer, id ) {
-    const checklistQuestion = writer.createElement( 'checklistQuestion', {id: id} );
+    const checklistQuestion = writer.createElement( 'checklistQuestion', {id} );
     const question = writer.createElement( 'question' );
     const questionTitle = writer.createElement( 'questionTitle' );
     const questionForm = writer.createElement( 'questionForm' );
@@ -44,6 +44,7 @@ function createChecklistQuestion( writer, id ) {
     writer.append( answerText, answer );
     writer.append( answerParagraph, answerText );
 
+    // Add text to empty editables, to get around the lack of placeholder support.
     // There must be at least one paragraph for the description to be editable.
     // See https://github.com/ckeditor/ckeditor5/issues/1464.
     writer.insertText( 'Question?', questionTitle );

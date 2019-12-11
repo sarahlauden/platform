@@ -17,9 +17,9 @@ export default class InsertSectionCommand extends Command {
 }
 
 function createSection( writer, id ) {
-    const section = writer.createElement( 'section', {id: id} );
+    const section = writer.createElement( 'section',  {id} );
 
-    // There must be at least one paragraph for the description to be editable.
+    // There must be at least one paragraph for the section to be editable.
     // See https://github.com/ckeditor/ckeditor5/issues/1464.
     writer.appendElement( 'paragraph', section );
 

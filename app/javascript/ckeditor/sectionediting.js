@@ -19,7 +19,7 @@ export default class SectionEditing extends Plugin {
         const schema = this.editor.model.schema;
 
         schema.register( 'section', {
-            //isLimit: true,
+            //isObject: true,
 
             allowIn: '$root',
 
@@ -30,12 +30,8 @@ export default class SectionEditing extends Plugin {
         } );
 
         schema.addChildCheck( ( context, childDefinition ) => {
-            // Note that the context is automatically normalized to a SchemaContext instance and
-            // the child to its definition (SchemaCompiledItemDefinition).
-
-            // If checkChild() is called with a context that ends with blockQuote and blockQuote as a child
-            // to check, make the checkChild() method return false.
-            if ( context.endsWith( 'section' ) && childDefinition.name == 'section' ) {
+            // Disallow sections within sections, at *any* level of nesting.
+            if ( [...context.getNames()].includes( 'section' ) && childDefinition.name == 'section' ) {
                 return false;
             }
         } );
@@ -45,7 +41,7 @@ export default class SectionEditing extends Plugin {
         const editor = this.editor;
         const conversion = editor.conversion;
 
-        // <section> converters ((data) view → model)
+        // <section> converters
         conversion.for( 'upcast' ).elementToElement( {
             view: {
                 name: 'section',
@@ -53,43 +49,32 @@ export default class SectionEditing extends Plugin {
             },
             model: ( viewElement, modelWriter ) => {
                 // Read the "data-id" attribute from the view and set it as the "id" in the model.
-                console.log(" up");
                 return modelWriter.createElement( 'section', {
                     id: parseInt( viewElement.getAttribute( 'data-id' ) )
                 } );
             }
         } );
-
-        // <section> converters (model → data view)
         conversion.for( 'dataDowncast' ).elementToElement( {
             model: 'section',
             view: ( modelElement, viewWriter ) => {
-                console.log("data down");
                 return viewWriter.createEditableElement( 'section', {
                     class: 'content-section',
                     'data-id': modelElement.getAttribute( 'id' )
                 } );
             }
         } );
-
-        // <section> converters (model → editing view)
         conversion.for( 'editingDowncast' ).elementToElement( {
             model: 'section',
             view: ( modelElement, viewWriter ) => {
-                // In the editing view, the model <section> corresponds to:
-                //
-                // <section class="..." data-id="...">
-                // </section>
                 const id = modelElement.getAttribute( 'id' );
-                console.log("ed down");
 
-                // The outermost <section class="checklist-question" data-id="..."></section> element.
-                const section = viewWriter.createEditableElement( 'section', {
+                const section = viewWriter.createContainerElement( 'section', {
                     class: 'content-section',
                     'data-id': id
                 } );
 
-                return toWidgetEditable( section, viewWriter, { label: 'section widget' } );
+                // Note: sections are not converted into widgets! They're just an element.
+                return section;
             }
         } );
     }

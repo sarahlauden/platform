@@ -211,6 +211,8 @@ class ContentEditor extends Component {
     // It synchronizes the initial data state and saves the reference to the editor instance.
     handleEditorInit( editor ) {
         this.editor = editor;
+
+        // Store a reference to the editor in the window, just to make debugging easier.
         window.editor = editor;
 
         this.setState( {
@@ -241,6 +243,7 @@ class ContentEditor extends Component {
                 // Note: it's important to handle errors here
                 // instead of a catch() block so that we don't swallow
                 // exceptions from actual bugs in components.
+                // TODO: We'll eventually want to actually handle errors, not just log them.
                 (error) => {
                     console.log(error);
                 }
@@ -336,15 +339,6 @@ class ContentEditor extends Component {
                                             key="3"
                                             onClick={this.showFileUpload}
                                             {...{name: 'Image', id: Math.floor(Math.random() * 1e16)}}
-                                        />
-                                        <ContentPartPreview
-                                            id="4"
-                                            key="4"
-                                            onClick={( id ) => {
-                                                this.editor.execute( 'heading', {value: 'heading2'} );
-                                                this.editor.editing.view.focus();
-                                            }}
-                                            {...{name: 'Heading2', id: Math.floor(Math.random() * 1e16)}}
                                         />
 
                                     </ul>

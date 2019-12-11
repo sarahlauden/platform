@@ -21,134 +21,77 @@ export default class ChecklistQuestionEditing extends Plugin {
         const schema = this.editor.model.schema;
 
         schema.register( 'checklistQuestion', {
-            // Behaves like a self-contained object (e.g. an image).
             isObject: true,
-
-            // Allow in places where other blocks are allowed (e.g. directly in the root).
             allowIn: 'section',
-
-            // Each content part preview has an ID. A unique ID tells the application which
-            // checklist-question it represents and makes it possible to render it inside a widget.
             allowAttributes: [ 'id' ]
         } );
 
         schema.register( 'question', {
-            // Behaves like a self-contained object (e.g. an image).
             isObject: true,
-
             allowIn: 'checklistQuestion',
         } );
 
         schema.register( 'questionTitle', {
-            // Cannot be split or left by the caret.
             isLimit: true,
-
             allowIn: 'question',
-
-            // Allow content which is allowed in blocks (i.e. text with attributes).
             allowContentOf: '$block'
         } );
 
         schema.register( 'questionForm', {
             // Cannot be split or left by the caret.
             isLimit: true,
-
             allowIn: 'question',
-
-            // Allow content which is allowed in the root (e.g. paragraphs).
-            allowContentOf: ['questionFieldset'],
         } );
 
         schema.register( 'questionFieldset', {
             // Cannot be split or left by the caret.
             isLimit: true,
-
             allowIn: 'questionForm',
-
-            // Allow content which is allowed in the root (e.g. paragraphs).
-            //allowContentOf: ['questionLegend', 'checkbox'],
         } );
 
         schema.register( 'questionLegend', {
             // Cannot be split or left by the caret.
             isLimit: true,
-
             allowIn: 'questionFieldset',
-
-            // Allow content which is allowed in blocks (i.e. text with attributes).
             allowContentOf: '$block'
         } );
 
         schema.register( 'checkboxDiv', {
-            // Cannot be split or left by the caret.
-            //isLimit: true,
-
             allowIn: 'questionFieldset',
-            //allowIn: 'section',
-
-            // Allow content which is allowed in blocks (i.e. text with attributes).
-            allowContentOf: '$root',
         } );
 
         schema.register( 'checkboxInput', {
-            // Cannot be split or left by the caret.
-            //isLimit: true,
             isInline: true,
-
             allowIn: 'checkboxDiv',
-
-            // Allow content which is allowed in blocks (i.e. text with attributes).
-            //allowContentOf: '$block',
-
             allowAttributes: [ 'id', 'name', 'value' ]
         } );
 
         schema.register( 'checkboxLabel', {
-            // Cannot be split or left by the caret.
-            //isLimit: true,
             isInline: true,
-
             allowIn: 'checkboxDiv',
-
-            // Allow content which is allowed in blocks (i.e. text with attributes).
             allowContentOf: '$block',
-
             allowAttributes: [ 'for' ]
         } );
 
         schema.register( 'answer', {
-            // Behaves like a self-contained object (e.g. an image).
             isObject: true,
-
             allowIn: 'checklistQuestion'
         } );
 
         schema.register( 'answerTitle', {
-            // Cannot be split or left by the caret.
             isLimit: true,
-
             allowIn: 'answer',
-
-            // Allow content which is allowed in blocks (i.e. text with attributes).
             allowContentOf: '$block'
         } );
 
         schema.register( 'answerText', {
-            // Cannot be split or left by the caret.
             isLimit: true,
-
             allowIn: 'answer',
-
-            // Allow content which is allowed in the root (e.g. paragraphs).
             allowContentOf: '$root'
         } );
 
         schema.addChildCheck( ( context, childDefinition ) => {
-            // Note that the context is automatically normalized to a SchemaContext instance and
-            // the child to its definition (SchemaCompiledItemDefinition).
-
-            // If checkChild() is called with a context that ends with blockQuote and blockQuote as a child
-            // to check, make the checkChild() method return false.
+            // Disallow adding questions inside answerText boxes.
             if ( context.endsWith( 'answerText' ) && childDefinition.name == 'checklistQuestion' ) {
                 return false;
             }
@@ -171,7 +114,7 @@ export default class ChecklistQuestionEditing extends Plugin {
             }
         });
 
-        // <checklistQuestion> converters ((data) view → model)
+        // <checklistQuestion> converters
         conversion.for( 'upcast' ).elementToElement( {
             view: {
                 name: 'div',
@@ -179,31 +122,24 @@ export default class ChecklistQuestionEditing extends Plugin {
             },
             model: ( viewElement, modelWriter ) => {
                 // Read the "data-id" attribute from the view and set it as the "id" in the model.
-                console.log(" up");
                 return modelWriter.createElement( 'checklistQuestion', {
                     id: parseInt( viewElement.getAttribute( 'data-id' ) )
                 } );
             }
         } );
-
-        // <checklistQuestion> converters (model → data view)
         conversion.for( 'dataDowncast' ).elementToElement( {
             model: 'checklistQuestion',
             view: ( modelElement, viewWriter ) => {
-                console.log("data down");
                 return viewWriter.createEditableElement( 'div', {
                     class: 'module-block module-block-checkbox',
                     'data-id': modelElement.getAttribute( 'id' )
                 } );
             }
         } );
-
-        // <checklistQuestion> converters (model → editing view)
         conversion.for( 'editingDowncast' ).elementToElement( {
             model: 'checklistQuestion',
             view: ( modelElement, viewWriter ) => {
                 const id = modelElement.getAttribute( 'id' );
-                console.log("ed down");
 
                 // The outermost <section class="checklist-question" data-id="..."></section> element.
                 const checklistQuestion = viewWriter.createContainerElement( 'div', {
@@ -323,7 +259,7 @@ export default class ChecklistQuestionEditing extends Plugin {
         conversion.for( 'editingDowncast' ).elementToElement( {
             model: 'checkboxDiv',
             view: ( modelElement, viewWriter ) => {
-                const div = viewWriter.createEditableElement( 'div', {} );
+                const div = viewWriter.createContainerElement( 'div', {} );
 
                 const widgetContents = viewWriter.createUIElement(
                     'select',
@@ -332,7 +268,6 @@ export default class ChecklistQuestionEditing extends Plugin {
                         'onchange': 'localStorage.setItem(`select[${this.name}]`, this.value)'
                     },
                     function( domDocument ) {
-                    console.log(this);
                         const domElement = this.toDomElement( domDocument );
                         domElement.innerHTML = `
                             <option value="correct">Correct</option>
@@ -345,11 +280,11 @@ export default class ChecklistQuestionEditing extends Plugin {
                 const insertPosition = viewWriter.createPositionAt( div, 0 );
                 viewWriter.insert( insertPosition, widgetContents );
 
-                return toWidgetEditable( div, viewWriter );
+                return toWidget( div, viewWriter );
             }
         } );
 
-        // <checkbox> converters
+        // <checkboxInput> converters
         conversion.for( 'upcast' ).elementToElement( {
             model: 'checkboxInput',
             view: {
@@ -373,7 +308,7 @@ export default class ChecklistQuestionEditing extends Plugin {
             }
         } );
 
-        // <checkbox> converters
+        // <checkboxLabel> converters
         conversion.for( 'upcast' ).elementToElement( {
             model: 'checkboxLabel',
             view: {
