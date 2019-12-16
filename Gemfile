@@ -90,3 +90,6 @@ gem 'sentry-raven'
 # Using a branch for a time being to remove R18n until we decide what we want to do
 gem 'rubycas-server-core', github: 'bebraven/rubycas-server-core', branch: 'platform-compat'
 gem 'rubycas-server-activerecord'
+
+# Honeycomb
+gem 'honeycomb-beeline'
