@@ -47,9 +47,9 @@ group :development do
   gem 'guard-bundler', require: false
   gem 'guard-yarn', require: false
   gem 'guard-migrate', require: false
-  gem 'pry-rescue'
-  gem 'pry-stack_explorer'
-  gem 'rubocop'
+  gem 'pry-rescue', require: false
+  gem 'pry-stack_explorer', require: false
+  gem 'rubocop', require: false
 end
 
 group :test do
@@ -65,7 +65,7 @@ group :test do
   gem 'codacy-coverage'
 
   # Clean database after tests
-  gem 'database_cleaner'
+  gem 'database_cleaner', require: false
 
   # Stores mocks in reusable file
   gem 'vcr'
@@ -92,4 +92,4 @@ gem 'rubycas-server-core', github: 'bebraven/rubycas-server-core', branch: 'plat
 gem 'rubycas-server-activerecord'
 
 # Honeycomb
-gem 'honeycomb-beeline'
+gem 'honeycomb-beeline', require: false
