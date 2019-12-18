@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_04_193832) do
+ActiveRecord::Schema.define(version: 2019_11_25_140958) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,13 +43,18 @@ ActiveRecord::Schema.define(version: 2019_11_04_193832) do
     t.index ["owner_id", "owner_type"], name: "index_contact_owners_on_owner_id_and_owner_type"
   end
 
-  create_table "contents", force: :cascade do |t|
+  create_table "course_contents", force: :cascade do |t|
     t.string "title"
     t.text "body"
     t.datetime "published_at"
     t.string "content_type"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "course_id"
+    # secondary_id will represent different things depending on the content_type.
+    # e.g. for modules, it will be a page ID; for assignments an assignment ID.
+    t.string "secondary_id"
+    t.string "course_name"
   end
 
   create_table "emails", force: :cascade do |t|
@@ -88,6 +93,14 @@ ActiveRecord::Schema.define(version: 2019_11_04_193832) do
     t.datetime "updated_at", null: false
     t.index ["code"], name: "index_locations_on_code", unique: true
     t.index ["name"], name: "index_locations_on_name", unique: true
+  end
+
+  create_table "login_tickets", force: :cascade do |t|
+    t.string "ticket", null: false
+    t.datetime "created_on", null: false
+    t.datetime "created_at", null: false
+    t.datetime "consumed"
+    t.string "client_hostname", null: false
   end
 
   create_table "majors", force: :cascade do |t|
@@ -148,11 +161,43 @@ ActiveRecord::Schema.define(version: 2019_11_04_193832) do
     t.index ["name"], name: "index_programs_on_name", unique: true
   end
 
+  create_table "proxy_granting_tickets", force: :cascade do |t|
+    t.string "ticket", null: false
+    t.datetime "created_on", null: false
+    t.datetime "created_at", null: false
+    t.string "client_hostname", null: false
+    t.string "iou", null: false
+    t.bigint "service_ticket_id"
+    t.index ["service_ticket_id"], name: "index_proxy_granting_tickets_on_service_ticket_id"
+  end
+
   create_table "roles", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_roles_on_name", unique: true
+  end
+
+  create_table "service_tickets", force: :cascade do |t|
+    t.string "ticket", null: false
+    t.string "service", null: false
+    t.datetime "created_on", null: false
+    t.datetime "created_at", null: false
+    t.datetime "consumed"
+    t.string "client_hostname", null: false
+    t.string "username", null: false
+    t.integer "proxy_granting_ticket_id"
+    t.integer "ticket_granting_ticket_id"
+  end
+
+  create_table "ticket_granting_tickets", force: :cascade do |t|
+    t.string "ticket", null: false
+    t.datetime "created_on", null: false
+    t.datetime "created_at", null: false
+    t.string "client_hostname", null: false
+    t.string "username", null: false
+    t.string "remember_me", null: false
+    t.string "extra_attributes", null: false
   end
 
   create_table "users", force: :cascade do |t|

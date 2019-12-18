@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
-  resources :contents
+  resources :course_contents do
+    post :publish
+  end
+
   devise_for :users
   
   get 'home/welcome'
@@ -10,7 +13,6 @@ Rails.application.routes.draw do
   resources :majors, except: [:show]
   resources :programs, except: [:show]
   resources :roles, except: [:show]
-  
   resources :people, only: [:index, :show]
 
   resources :postal_codes, only: [:index, :show] do
@@ -29,4 +31,18 @@ Rails.application.routes.draw do
   end
 
   root to: "home#welcome"
+
+
+  # RubyCAS Routes
+  resources :cas, except: [:show]
+  get '/cas/login', to: 'cas#login'
+  post '/cas/login', to: 'cas#loginpost'
+  get '/cas/logout', to: 'cas#logout'
+  get '/cas/loginTicket', to: 'cas#loginTicket'
+  post '/cas/loginTicket', to: 'cas#loginTicketPost'
+  get '/cas/validate', to: 'cas#validate'
+  get '/cas/serviceValidate', to: 'cas#serviceValidate'
+  get '/cas/proxyValidate', to: 'cas#proxyValidate'
+  get '/cas/proxy', to: 'cas#proxy'
+
 end

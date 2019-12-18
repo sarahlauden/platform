@@ -14,8 +14,6 @@ test('rendered component', () => {
     name={'test-name'}
     onClick={null}
   />);
-  // look for the + inside the inner span
-  expect(wrapper.debug()).toContain('+');
   // look for the name
   expect(wrapper.debug()).toContain('name="test-name"');
 });

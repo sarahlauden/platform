@@ -7,7 +7,7 @@ gem 'rails', '~> 6.0.0'
 gem 'pg'
 
 # Use Puma as the app server
-gem 'puma', '~> 3.11'
+gem 'puma', '~> 3.12'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5'
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
@@ -47,6 +47,9 @@ group :development do
   gem 'guard-bundler', require: false
   gem 'guard-yarn', require: false
   gem 'guard-migrate', require: false
+  gem 'pry-rescue', require: false
+  gem 'pry-stack_explorer', require: false
+  gem 'rubocop', require: false
 end
 
 group :test do
@@ -55,9 +58,17 @@ group :test do
   gem 'selenium-webdriver'
   # Easy installation and use of web drivers to run system tests with browsers
   gem 'webdrivers'
+  # HTTP request mocking
+  gem 'webmock', require: false
 
   # Report test coverage
   gem 'codacy-coverage'
+
+  # Clean database after tests
+  gem 'database_cleaner', require: false
+
+  # Stores mocks in reusable file
+  gem 'vcr'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -66,6 +77,8 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'paranoia'
 gem 'will_paginate'
 gem 'bulk_insert'
+
+gem 'rest-client'
 
 gem 'devise'
 gem 'devise_cas_authenticatable'
@@ -77,3 +90,6 @@ gem 'sentry-raven'
 # Using a branch for a time being to remove R18n until we decide what we want to do
 gem 'rubycas-server-core', github: 'bebraven/rubycas-server-core', branch: 'platform-compat'
 gem 'rubycas-server-activerecord'
+
+# Honeycomb
+gem 'honeycomb-beeline', require: false
