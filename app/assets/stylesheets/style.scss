@@ -42,6 +42,14 @@ nav {
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
 }
 
+nav ul li a{
+  color:white;
+}
+
+nav ul{
+  list-style:none;
+}
+
 #container {
   transition: margin-left .5s;
 }
@@ -191,6 +199,7 @@ ul#widget-list li{
   position: relative;
   padding-right:($baseSpacing * 2.5);
   border-bottom-width:2px;
+  cursor:pointer;
 }
 
 ul#widget-list li:after{
@@ -209,6 +218,17 @@ ul#widget-list li:after{
   margin-top:-11px;
 }
 
+ul#widget-list li.disabled, ul#widget-list li.disabled:hover{
+    border-bottom-width: 1px;
+    background-color: $neutralXLT;
+    color: #929191;
+    cursor:default;
+}
+
+ul#widget-list li.disabled:after, ul#widget-list li.disabled:hover:after{
+  display:none;
+}
+
 ul#component-types li:hover, ul#component-types li.active{
   z-index:100;
   position:relative;
@@ -219,4 +239,11 @@ ul#widget-list li:hover:after{
   background:$primaryDK;
 }
 
+.module-block{
+    border: 2px solid $neutralXLT;
+}
 
+.module-block .ck-widget_selected{
+  border: 2px solid $primaryLT;
+  border-bottom-color: $primaryDK;
+}
